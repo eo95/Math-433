@@ -13,6 +13,19 @@ one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta) {
   return(c(C,A,B))
 }
 
+one_step_claim_discrete <- function(S,Su,Sd,Cu,Cd,r,h,D) {
+  # The function solves for C, A, B as a one time step binomial tree
+  # with discrete dividends
+  # Outputs a numeric vector of C, A, B
+  
+  u <- Su/S
+  d <- Sd/S
+  A <- (Cu-Cd)/(Su-Sd)
+  B <- exp(-r*h)*(Su*Cd-Sd*Cu)/(Su-Sd) - A*D*exp(-r*h)
+  C <- B + A*S
+  return(c(C,A,B))
+}
+
 generate_S_m <- function(S,n,u,d) {
   # Generates the matrix of S values for each node of the binomial tree using S = S[1,1], n, u, d
   # Output is S_m: an n+1 by n+1 numeric matrix.
