@@ -2,15 +2,15 @@
 # Functions
 
 one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta) {
-  # The function solves for C, D, B as a one time step binomial tree
-  # Outputs a numeric vector of C, D, B
+  # The function solves for C, A, B as a one time step binomial tree
+  # Outputs a numeric vector of C, A, B
   
   u <- Su/S
   d <- Sd/S
-  D <- exp(-delta*h)*(Cu-Cd)/(Su-Sd)
+  A <- exp(-delta*h)*(Cu-Cd)/(Su-Sd)
   B <- exp(-r*h)*(u*Cd-d*Cu)/(u-d)
-  C <- B + D*S
-  return(c(C,D,B))
+  C <- B + A*S
+  return(c(C,A,B))
 }
 
 generate_S_m <- function(S,n,u,d) {
@@ -85,17 +85,17 @@ generate_ud <- function(choice, h, r, delta, sigma, mu, u, d){
   }
   return(list(u = u, d = d))
 }
-solve_binomial_pricing <- function(S_m,C_m,D_m,B_m,r,h,n,eur,payoff,K,delta){
-  # Solves the values of C, D, and B for each node of the binomial tree.
-  # Requires the matrix S_m, C_m, D_m, and B_m. As well as r, h, n, delta.
+solve_binomial_pricing <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta){
+  # Solves the values of C, A, and B for each node of the binomial tree.
+  # Requires the matrix S_m, C_m, A_m, and B_m. As well as r, h, n, delta.
   # If not a European option, requires the payoff function, K.
-  # Output is a list of numeric matrices: S_m, C_m, D_m, and B_m
+  # Output is a list of numeric matrices: S_m, C_m, A_m, and B_m
   
   for(i in seq(n,1,-1)){
     for(j in seq(1,i)){
       values   <- one_step_claim(S_m[j,i],S_m[j,i+1],S_m[j+1,i+1],C_m[j,i+1],C_m[j+1,i+1],r,h,delta)
       C_m[j,i] <- values[1]
-      D_m[j,i] <- values[2]
+      A_m[j,i] <- values[2]
       B_m[j,i] <- values[3]
     }
     if(!eur){
@@ -115,24 +115,24 @@ solve_binomial_pricing <- function(S_m,C_m,D_m,B_m,r,h,n,eur,payoff,K,delta){
   colnames(S_m) <- collab
   rownames(C_m) <- rowlab
   colnames(C_m) <- collab
-  rownames(D_m) <- rowlab
-  colnames(D_m) <- collab
+  rownames(A_m) <- rowlab
+  colnames(A_m) <- collab
   rownames(B_m) <- rowlab
   colnames(B_m) <- collab
-  return(list(S_m,C_m,D_m,B_m))
+  return(list(S_m,C_m,A_m,B_m))
 }
-solve_binomial_pricing_nonconstant <- function(S_m,C_m,D_m,B_m,r,h,n,eur,payoff,K,delta){
-  # Solves the values of C, D, and B for each node of the binomial tree.
-  # Requires the matrix S_m, C_m, D_m, and B_m. As well as r, h, n, delta.
+solve_binomial_pricing_nonconstant <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta){
+  # Solves the values of C, A, and B for each node of the binomial tree.
+  # Requires the matrix S_m, C_m, A_m, and B_m. As well as r, h, n, delta.
   # If not a European option, requires the payoff function, K.
-  # Output is a list of numeric matrices: S_m, C_m, D_m, and B_m
+  # Output is a list of numeric matrices: S_m, C_m, A_m, and B_m
   
   for(i in seq(n,1,-1)){
     for(j in seq(1,2^(i-1))){
       k <- 2^(i-1) + j -1
       values   <- one_step_claim(S_m[k],S_m[2*k],S_m[2*k + 1],C_m[2*k],C_m[2*k+1],r[i],h,delta[i])
       C_m[k] <- values[1]
-      D_m[k] <- values[2]
+      A_m[k] <- values[2]
       B_m[k] <- values[3]
     }
     if(!eur){
@@ -145,20 +145,20 @@ solve_binomial_pricing_nonconstant <- function(S_m,C_m,D_m,B_m,r,h,n,eur,payoff,
       C_m[a:b] <- C_i
     }
   }
-  return(list(S_m,C_m,D_m,B_m))
+  return(list(S_m,C_m,A_m,B_m))
 }
-solve_binomial_pricing_new <- function(S_m,C_m,D_m,B_m,r,h,n,eur,payoff,K,delta){
-  # Solves the values of C, D, and B for each node of the binomial tree.
-  # Requires the matrix S_m, C_m, D_m, and B_m. As well as r, h, n, delta.
+solve_binomial_pricing_new <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta){
+  # Solves the values of C, A, and B for each node of the binomial tree.
+  # Requires the matrix S_m, C_m, A_m, and B_m. As well as r, h, n, delta.
   # If not a European option, requires the payoff function, K.
-  # Output is a list of numeric matrices: S_m, C_m, D_m, and B_m
+  # Output is a list of numeric matrices: S_m, C_m, A_m, and B_m
   
   for(i in seq(n,1,-1)){
     for(j in seq(1,i)){
       k <- (i-1)*i/2 + j 
       values   <- one_step_claim(S_m[k],S_m[k+i],S_m[k+i+1],C_m[k+i],C_m[k+i+1],r[i],h,delta[i])
       C_m[k] <- values[1]
-      D_m[k] <- values[2]
+      A_m[k] <- values[2]
       B_m[k] <- values[3]
     }
     if(!eur){
@@ -171,12 +171,12 @@ solve_binomial_pricing_new <- function(S_m,C_m,D_m,B_m,r,h,n,eur,payoff,K,delta)
       C_m[a:b] <- C_i
     }
   }
-  return(list(S_m,C_m,D_m,B_m))
+  return(list(S_m,C_m,A_m,B_m))
 }
 
 binomial_pricing <- function(P,payoff){
   # Function that takes a list of formatted parameters and a payoff function, and implements the binomial model.
-  # Output is a list of matrices for the node values of S, C, D, B.
+  # Output is a list of matrices for the node values of S, C, A, B.
   ## The compiler seems to think the dollar symbol works like quotations. Copy/Paste into RStudio has no issues with this function.
   h <- P$T_exp/P$n
   n <- P$n
@@ -199,23 +199,23 @@ binomial_pricing <- function(P,payoff){
   if(length(u) == 1){
     S_m <- generate_S_m_new(P$S,n,u,d)
     C_m <- vector("numeric",(n+1)*(n+2)/2)
-    D_m <- vector("numeric",(n+1)*(n+2)/2)
+    A_m <- vector("numeric",(n+1)*(n+2)/2)
     B_m <- vector("numeric",(n+1)*(n+2)/2)
     a <- (n+1)*n/2+1
     b <- (n+1)*(n+2)/2
     S_T <- S_m[a:b]
     C_m[a:b] <- payoff(S_T,P$K)
-    solution <- solve_binomial_pricing_new(S_m,C_m,D_m,B_m,r,h,n,P$eur,payoff=payoff,P$K,delta)
+    solution <- solve_binomial_pricing_new(S_m,C_m,A_m,B_m,r,h,n,P$eur,payoff=payoff,P$K,delta)
   } else{
     S_m <- generate_S_m_nonconstant(P$S,n,u,d)
     C_m <- vector("numeric",2^(n+1)-1)
-    D_m <- vector("numeric",2^(n+1)-1)
+    A_m <- vector("numeric",2^(n+1)-1)
     B_m <- vector("numeric",2^(n+1)-1)
     a <- 2^(n)
     b <- 2^(n+1)-1
     S_T <- S_m[a:b]
     C_m[a:b] <- payoff(S_T,P$K)
-    solution <- solve_binomial_pricing_nonconstant(S_m,C_m,D_m,B_m,r,h,n,P$eur,payoff=payoff,P$K,delta)
+    solution <- solve_binomial_pricing_nonconstant(S_m,C_m,A_m,B_m,r,h,n,P$eur,payoff=payoff,P$K,delta)
   }
   return(solution)
 }
