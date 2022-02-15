@@ -63,7 +63,7 @@ generate_S_m_nonconstant <- function(S,n,u,d){
   }
   return(S_m)
 }
-generate_ud <- function(choice, h, r, delta, sigma, mu, u, d){
+generate_ud <- function(choice, h, r, delta, sigma, mu, K, S, n, u, d){
   if(choice == 0){
     u <- u
     d <- d
@@ -197,7 +197,7 @@ binomial_pricing <- function(P,payoff){
   if (typeof(P$r) == "closure"){
     discretize_r_t(r,n,h)
   }
-  ud <- generate_ud(P$choice, h, P$r, P$delta, P$sigma, P$mu, P$u, P$d)
+  ud <- generate_ud(P$choice, h, P$r, P$delta, P$sigma, P$mu, P$K, P$S, P$n, P$u, P$d)
   u <- ud$u
   d <- ud$d
   if(length(P$r) == 1){
