@@ -16,6 +16,7 @@ one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta) {
 one_step_claim_discrete <- function(S,Su,Sd,Cu,Cd,r,h,D) {
   # The function solves for C, A, B as a one time step binomial tree
   # with discrete dividends
+  # D is the value of the dividend at time t + h
   # Outputs a numeric vector of C, A, B
   
   u <- Su/S
@@ -256,7 +257,31 @@ generate_P <- function(S,K,r,T_exp,n,sigma=0.1,delta=0,mu=0,choice=0,u=10^8,d=10
   P <- list("S"=S,"K"=K,"r"=r,"T_exp"=T_exp,"n"=n,"sigma"=sigma,"delta"=delta,"mu"=mu, "choice"=choice,"u"=u,"d"=d,"eur"=eur)
   return(P)
 }
-
+generate_D <- function(vec,n,h,r){
+  # Creates a vector of D's in the form needed for one_step_claim_discrete
+  # from vector in (time, dividend, time, dividend,...) form
+  # assuming the times are in increasing order
+  len <- length(vec)
+  output <- c()
+  for (i in seq(1,len,2)){
+    t <- vec[i]
+    j <- ceiling(t/h) - 1
+    t <- h*(j+1) - t
+    j <- j - length(output)
+    output <- append(output,rep(0,j))
+    D <- vec[i+1]
+    D <- D*exp(r*t)
+    output <- append(output, D)
+  }
+  i <- length(output)
+  if (i > n){
+    output <- output[1:n]
+  } else{
+    i <- n - i
+    output <- append(output, rep(0,i))
+  }
+  return(output)
+}
 call_payoff            <- function(S,K){
   output <- ifelse(S>K,S-K,0)
   return(output)
