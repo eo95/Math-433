@@ -18,6 +18,9 @@ BlackScholes <- function(S, K, sigma, r, T, delta, type){
 #1 is put
 #This formula does not account for dividends
 
+#From book example
+#Let S =$41 K=$40, sigma = 0.3, r = 8%, T = 0.25 (3 months), and delta = 0 (no dividend yield)
+
 #Call Premium
 #BlackScholes(41, 40, 0.3, 0.08, 0.25, 0, 0)
 #Should equal 3.399 from textbook
