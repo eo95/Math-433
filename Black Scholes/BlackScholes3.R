@@ -15,3 +15,6 @@ BlackScholesF <- function(S, K, sigma, r, T, type, delta){
     return(price)
   }
 }
+
+
+#I DID NOT CHECK THIS CODE WARNING
