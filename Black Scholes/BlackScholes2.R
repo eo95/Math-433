@@ -1,5 +1,5 @@
 #Black Scholes with Discrete Dividends
-BlackScholesD <- function(So, K, sigma, r, T, type, delta, dividends,t){
+BlackScholesD <- function(So, K, sigma, r, T, delta, type, dividends,t){
   if (type == 0 ){
     S = So - dividends*exp(-r*t)
     d1 <- (log(S/K) + (r - delta + sigma^2/2)*T) / (sigma*sqrt(T))
