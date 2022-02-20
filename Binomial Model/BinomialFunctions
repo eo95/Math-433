@@ -1,0 +1,130 @@
+# Functions Used in the Binomial Pricing Model
+
+one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta=0,D=0) {
+  # The function solves for C, A, B as a one time step binomial tree
+  # delta is the continuous dividend rate
+  # D is the discrete dividend at time "t+h"
+  # Outputs a numeric vector of C, A, B
+  u <- Su/S
+  d <- Sd/S
+  A <- exp(-delta*h)*(Cu-Cd)/(Su-Sd)
+  B <- exp(-r*h)*(u*Cd-d*Cu)/(u-d) - A*D*exp(-r*h)
+  return(c(C,A,B))
+}
+
+generate_S_v <- function(S,n,u,d){
+  S_v <- vector("numeric",2^(n+1) - 1)
+  S_v[1] <- S
+  for(i in 1:n){
+    for (j in 1:2^(i-1)){
+      k <- 2^(i-1) + j - 1
+      S_v[2*k]     <- u[i]*S_v[k]
+      S_v[2*k + 1] <- d[i]*S_v[k]
+    }
+  }
+  return(S_v)
+}
+
+generate_ud <- function(choice, h, r, delta, sigma, mu, K, S, n, u, d){
+  if(choice == 0){
+    u <- u
+    d <- d
+  } else if(choice==1){
+    # McDonald Eqn (10.9)
+    u <- exp((r-delta)*h+sigma*sqrt(h))
+    d <- exp((r-delta)*h-sigma*sqrt(h))
+  } else if(choice==2){
+    # Cox-Ross-Rubinstein (CRR)
+    u <- exp((r-sigma^2/2)*h+sigma*sqrt(h))
+    d <- exp((r-sigma^2/2)*h-sigma*sqrt(h))
+  } else if(choice==3){
+    # Jarrow-Rudd (JR)
+    u <- exp(sigma*sqrt(h))
+    d <- exp(-sigma*sqrt(h))
+  } else if(choice==4){
+    # Modified Cox-Ross-Rubinstein (MCRR)
+    K_n <- log(K/S)/n
+    V_n <- sigma*sqrt(h)
+    u   <- exp(K_n+V_n)
+    d   <- exp(K_n-V_n)
+  } else if(choice==5){
+    #Equal Probabilities Tree (EQP)
+    a = mu*h
+    b = 0.5*sqrt(4*h*sigma^2 - 3*(h*mu)^2)
+    u = exp(0.5*a + b)
+    d = exp(b - 1.5*a)
+  } else if(choice==6){
+    #Trigeorgis Tree (TRG)
+    a = sqrt(h*sigma^2 + (h*mu)^2)
+    u = exp(a)
+    d = exp(-a)
+  }
+  return(list(u = u, d = d))
+}
+
+generate_D_v <- function(vec,n,h,r){
+  # Creates a vector of D's in the form needed for one_step_claim_discrete
+  # from vector in (time, dividend, time, dividend,...) form
+  # assuming the times are in increasing order
+  len <- length(vec)
+  output <- c()
+  for (i in seq(1,len,2)){
+    t <- vec[i]
+    j <- ceiling(t/h) - 1
+    t <- h*(j+1) - t
+    j <- j - length(output)
+    output <- append(output,rep(0,j))
+    D <- vec[i+1]
+    D <- D*exp(r*t)
+    output <- append(output, D)
+  }
+  i <- length(output)
+  if (i > n){
+    output <- output[1:n]
+  } else{
+    i <- n - i
+    output <- append(output, rep(0,i))
+  }
+  return(output)
+}
+
+discretize_r_t <- function(r_t,n,h){
+  areas <- rep(0,n)
+  for(i in 1:n){
+    areas[i] = integrate(r_t,(i-1)*h,i*h)$value
+  }
+  return(areas/h)
+}
+
+solve_binomial_pricing
+
+binomial_pricing
+
+parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u=10^8,d=10^8,eur=T,D_CF='None'){
+  # Find T_exp, n, and h
+  if(T_exp==0){T_exp=n*h}
+  else if(n==0){n=T_exp/h}
+  else {h=T_exp/n}
+  
+  # Creates r_v
+  if(is.numeric(r)){
+    r_v <- rep(r,n)
+  } else {
+    r_v <- discretize_r_t(r,n,h)
+  }
+  
+  # Creates D_v
+  if(D_CF[1] == 'None'){
+    D_v <- rep(0,n)
+  } else {
+    D_v <- generate_D_v(D_CF,n,h,r_v)
+  }
+  
+  # Creates u and d
+  ud <- generate_ud(choice,h,r_v,delta,sigma,mu,K,S,n,u,d)
+  u <- ud$u
+  d <- ud$d
+  
+  P <- list("S"=S,"r_v"=r_v,"T_exp"=T_exp,"n"=n,"h"=h,"K"=K,"sigma"=sigma,"delta"=delta,"D_v"=D_v,"choice"=choice,"u"=u,"d"=d,"eur"=eur)
+  return(P)
+}
