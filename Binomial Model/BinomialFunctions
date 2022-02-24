@@ -63,27 +63,20 @@ generate_ud <- function(choice, h, r, delta, sigma, mu, K, S, n, u, d){
 }
 
 generate_D_v <- function(vec,n,h,r){
-  # Creates a vector of D's in the form needed for one_step_claim_discrete
-  # from vector in (time, dividend, time, dividend,...) form
-  # assuming the times are in increasing order
+  output <- rep(0,n)
   len <- length(vec)
-  output <- c()
-  for (i in seq(1,len,2)){
-    t <- vec[i]
-    j <- ceiling(t/h) - 1
-    t <- h*(j+1) - t
-    j <- j - length(output)
-    output <- append(output,rep(0,j))
-    D <- vec[i+1]
-    D <- D*exp(r*t)
-    output <- append(output, D)
+  CFs    <- matrix(0,nrow=len/2,ncol=2)
+  for (i in 0:(len/2-1)){
+    for (j in 1:2){
+      CFs[i+1,j] <- vec[i*2+j]
+    }
   }
-  i <- length(output)
-  if (i > n){
-    output <- output[1:n]
-  } else{
-    i <- n - i
-    output <- append(output, rep(0,i))
+  for (i in 1:len/2){
+    a = CFs[i,1]
+    b = ceiling(CFs[i,1])
+    interest = exp(integrate(r,a,b)$value)
+    end_div = interest*CFs[i,2]
+    output[b] = output[b] + end_div
   }
   return(output)
 }
@@ -96,9 +89,48 @@ discretize_r_t <- function(r_t,n,h){
   return(areas/h)
 }
 
-solve_binomial_pricing
+solve_binomial_pricing <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta,D_v){
+  # Solves the values of C, A, and B for each node of the binomial tree.
+  # Requires the matrix S_m, C_m, A_m, and B_m. As well as r, h, n, delta.
+  # If not a European option, requires the payoff function, K.
+  # Output is a list of numeric matrices: S_m, C_m, A_m, and B_m
+  
+  for(i in seq(n,1,-1)){
+    for(j in seq(1,2^(i-1))){
+      k <- 2^(i-1) + j -1
+      values   <- one_step_claim(S_v[k],S_v[2*k],S_v[2*k + 1],C_v[2*k],C_v[2*k+1],r[i],h,delta[i],D_v[i])
+      C_v[k] <- values[1]
+      A_v[k] <- values[2]
+      B_v[k] <- values[3]
+    }
+    if(!eur){
+      a <- 2^i
+      b <- b
+      C_1 <- C_v[a:b]
+      S_i <- S_v[a:b]
+      C_2 <- payoff(S_i,K)
+      C_i <- ifelse(C_1>C_2,C_1,C_2)
+      C_v[a:b] <- C_i
+    }
+  }
+  return(list(S_m,C_m,A_m,B_m))
+}
 
-binomial_pricing
+binomial_pricing <- function(P,payoff){
+  # Function that takes a list of formatted parameters and a payoff function, and implements the binomial model.
+  # Output is a list of matrices for the node values of S, C, A, B.
+  ## The compiler seems to think the dollar symbol works like quotations. Copy/Paste into RStudio has no issues with this function.
+  S_v <- generate_S_v(P$S,P$n,P$u,P$d)
+  C_v <- vector("numeric",2^(n+1)-1)
+  A_v <- vector("numeric",2^(n+1)-1)
+  B_v <- vector("numeric",2^(n+1)-1)
+  a <- 2^(n)
+  b <- 2^(n+1)-1
+  S_T <- S_m[a:b]
+  C_m[a:b] <- payoff(S_T,P$K)
+  solution <- solve_binomial_pricing(S_v,C_v,A_v,B_v,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+  return(solution)
+}
 
 parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u=10^8,d=10^8,eur=T,D_CF='None'){
   # Find T_exp, n, and h
@@ -117,7 +149,7 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   if(D_CF[1] == 'None'){
     D_v <- rep(0,n)
   } else {
-    D_v <- generate_D_v(D_CF,n,h,r_v)
+    D_v <- generate_D_v(D_CF,n,h,r)
   }
   
   # Creates u and d
