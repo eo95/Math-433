@@ -12,7 +12,7 @@ one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta=0,D=0) {
   return(c(C,A,B))
 }
 
-generate_S_v <- function(S,n,u,d){
+generate_S_v <- function(S,n,u,d,D_v){
   S_v <- vector("numeric",2^(n+1) - 1)
   S_v[1] <- S
   for(i in 1:n){
@@ -74,7 +74,11 @@ generate_D_v <- function(vec,n,h,r){
   for (i in 1:len/2){
     a = CFs[i,1]
     b = ceiling(CFs[i,1])
-    interest = exp(integrate(r,a,b)$value)
+    if(is.numeric(r)){
+      interest = exp(r*(b-a))
+    } else{
+      interest = exp(integrate(r,a,b)$value)
+    }
     end_div = interest*CFs[i,2]
     output[b] = output[b] + end_div
   }
