@@ -71,13 +71,13 @@ generate_D_v <- function(vec,n,h,r){
       CFs[i+1,j] <- vec[i*2+j]
     }
   }
-  for (i in 1:len/2){
+  for (i in 1:(len/2)){
     a = CFs[i,1]
-    b = ceiling(CFs[i,1])
+    b = ceiling(CFs[i,1]/h)
     if(is.numeric(r)){
-      interest = exp(r*(b-a))
+      interest = exp(r*(b*h-a))
     } else{
-      interest = exp(integrate(r,a,b)$value)
+      interest = exp(integrate(r,a,b*h)$value)
     }
     end_div = interest*CFs[i,2]
     output[b] = output[b] + end_div
