@@ -16,10 +16,11 @@ generate_S_v <- function(S,n,u,d,D_v){
   S_v <- vector("numeric",2^(n+1) - 1)
   S_v[1] <- S
   for(i in 1:n){
+    D <- D[i]
     for (j in 1:2^(i-1)){
       k <- 2^(i-1) + j - 1
-      S_v[2*k]     <- u[i]*S_v[k]
-      S_v[2*k + 1] <- d[i]*S_v[k]
+      S_v[2*k]     <- u[i]*(S_v[k] - D)
+      S_v[2*k + 1] <- d[i]*(S_v[k] - D)
     }
   }
   return(S_v)
