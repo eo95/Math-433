@@ -169,3 +169,24 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   P <- list("S"=S,"r_v"=r_v,"T_exp"=T_exp,"n"=n,"h"=h,"K"=K,"sigma"=sigma,"delta"=delta,"D_v"=D_v,"choice"=choice,"u"=u,"d"=d,"eur"=eur)
   return(P)
 }
+
+# VOLATILITY FUNCTIONS
+nonannual_volatility <- function(prices){
+  returns_d <- daily_returns(prices)
+  sigma_d <- sqrt(sum(returns_d^2)/(length(returns_d)-1))
+  return(sigma_n)
+}
+
+daily_returns <- function(daily_prices){
+  n <- length(daily_prices)
+  a <- daily_prices[-n]
+  b <- daily_prices[-1]
+  daily_returns <- (b-a)/b
+  return(daily_returns)
+}
+
+ann_volatility <- function(prices,numperyear=252){
+  sigma_d <- nonannual_volatility(prices)
+  sigma <- sqrt(numperyear)*sigma_d
+  return(sigma)
+}
