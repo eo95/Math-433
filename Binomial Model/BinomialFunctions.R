@@ -9,6 +9,7 @@ one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta=0,D=0) {
   d <- Sd/S
   A <- exp(-delta*h)*(Cu-Cd)/(Su-Sd)
   B <- exp(-r*h)*(u*Cd-d*Cu)/(u-d) - A*D*exp(-r*h)
+  C <- A*S + B
   return(c(C,A,B))
 }
 
@@ -16,7 +17,7 @@ generate_S_v <- function(S,n,u,d,D_v){
   S_v <- vector("numeric",2^(n+1) - 1)
   S_v[1] <- S
   for(i in 1:n){
-    D <- D[i]
+    D <- D_v[i]
     for (j in 1:2^(i-1)){
       k <- 2^(i-1) + j - 1
       S_v[2*k]     <- u[i]*(S_v[k] - D)
@@ -94,7 +95,7 @@ discretize_r_t <- function(r_t,n,h){
   return(areas/h)
 }
 
-solve_binomial_pricing <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta,D_v){
+solve_binomial_pricing <- function(S_v,C_v,A_v,B_v,r,h,n,eur,payoff,K,delta,D_v){
   # Solves the values of C, A, and B for each node of the binomial tree.
   # Requires the matrix S_m, C_m, A_m, and B_m. As well as r, h, n, delta.
   # If not a European option, requires the payoff function, K.
@@ -103,6 +104,7 @@ solve_binomial_pricing <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta,D_v)
   for(i in seq(n,1,-1)){
     for(j in seq(1,2^(i-1))){
       k <- 2^(i-1) + j -1
+      print(k)
       values   <- one_step_claim(S_v[k],S_v[2*k],S_v[2*k + 1],C_v[2*k],C_v[2*k+1],r[i],h,delta[i],D_v[i])
       C_v[k] <- values[1]
       A_v[k] <- values[2]
@@ -118,21 +120,21 @@ solve_binomial_pricing <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta,D_v)
       C_v[a:b] <- C_i
     }
   }
-  return(list(S_m,C_m,A_m,B_m))
+  return(list(S_v,C_v,A_v,B_v))
 }
 
 binomial_pricing <- function(P,payoff){
   # Function that takes a list of formatted parameters and a payoff function, and implements the binomial model.
   # Output is a list of matrices for the node values of S, C, A, B.
   ## The compiler seems to think the dollar symbol works like quotations. Copy/Paste into RStudio has no issues with this function.
-  S_v <- generate_S_v(P$S,P$n,P$u,P$d)
+  S_v <- generate_S_v(P$S,P$n,P$u,P$d, P$D_v)
   C_v <- vector("numeric",2^(n+1)-1)
   A_v <- vector("numeric",2^(n+1)-1)
   B_v <- vector("numeric",2^(n+1)-1)
   a <- 2^(n)
   b <- 2^(n+1)-1
-  S_T <- S_m[a:b]
-  C_m[a:b] <- payoff(S_T,P$K)
+  S_T <- S_v[a:b]
+  C_v[a:b] <- payoff(S_T,P$K)
   solution <- solve_binomial_pricing(S_v,C_v,A_v,B_v,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
   return(solution)
 }
@@ -149,6 +151,9 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   } else {
     r_v <- discretize_r_t(r,n,h)
   }
+  
+  #vectorize delta
+  delta <- rep(delta,n)
   
   # Creates D_v
   if(D_CF[1] == 'None'){
