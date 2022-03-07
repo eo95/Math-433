@@ -104,15 +104,14 @@ solve_binomial_pricing <- function(S_v,C_v,A_v,B_v,r,h,n,eur,payoff,K,delta,D_v)
   for(i in seq(n,1,-1)){
     for(j in seq(1,2^(i-1))){
       k <- 2^(i-1) + j -1
-      print(k)
       values   <- one_step_claim(S_v[k],S_v[2*k],S_v[2*k + 1],C_v[2*k],C_v[2*k+1],r[i],h,delta[i],D_v[i])
       C_v[k] <- values[1]
       A_v[k] <- values[2]
       B_v[k] <- values[3]
     }
     if(!eur){
-      a <- 2^i
-      b <- b
+      a <- 2^(i-1)
+      b <- 2^(i)-1
       C_1 <- C_v[a:b]
       S_i <- S_v[a:b]
       C_2 <- payoff(S_i,K)
