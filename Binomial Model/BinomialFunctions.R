@@ -190,3 +190,15 @@ ann_volatility <- function(prices,numperyear=252){
   sigma <- sqrt(numperyear)*sigma_d
   return(sigma)
 }
+
+# Generic Payoffs
+
+call_payoff            <- function(S,K){
+  output <- ifelse(S>K,S-K,0)
+  return(output)
+}
+
+put_payoff             <- function(S,K){
+  output <- ifelse(K>S,K-S,0)
+  return(output)
+}
