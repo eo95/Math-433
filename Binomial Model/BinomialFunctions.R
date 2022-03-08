@@ -174,7 +174,7 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
 nonannual_volatility <- function(prices){
   returns_d <- daily_returns(prices)
   sigma_d <- sqrt(sum(returns_d^2)/(length(returns_d)-1))
-  return(sigma_n)
+  return(sigma_d)
 }
 
 daily_returns <- function(daily_prices){
