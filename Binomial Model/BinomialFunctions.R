@@ -124,8 +124,11 @@ solve_binomial_pricing <- function(S_v,C_v,A_v,B_v,r,h,n,eur,payoff,K,delta,D_v)
 
 binomial_pricing <- function(P,payoff){
   # Function that takes a list of formatted parameters and a payoff function, and implements the binomial model.
+  #   Formatted parameters P derived from parametrize()
+  #
+  #   payoff in the form function(S,K) where S is an asset price and
+  #   K is the strike price though the claim need not actually depend on K
   # Output is a list of matrices for the node values of S, C, A, B.
-  ## The compiler seems to think the dollar symbol works like quotations. Copy/Paste into RStudio has no issues with this function.
   S_v <- generate_S_v(P$S,P$n,P$u,P$d, P$D_v)
   C_v <- vector("numeric",2^(n+1)-1)
   A_v <- vector("numeric",2^(n+1)-1)
@@ -139,6 +142,29 @@ binomial_pricing <- function(P,payoff){
 }
 
 parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u=10^8,d=10^8,eur=T,D_CF='None'){
+  # S: Time 0 value of the asset priced in desired currency
+  # r: Risk-free rate with respect to desired currency in decimal form
+  #   may be given in the form of an integer, a vector, or a function
+  # T_exp: Time at which claim will expire in years
+  # n: number of steps desired
+  # h: time between steps
+  # K: strike value of claim in desired currency
+  #   though your claim need not have a strike in general this is necessary for
+  #   MCRR pricing
+  # sigma: volatility evaluated annually in decimal form
+  #   may be given in the form of an integer or a vector
+  # delta: dividend rate evaluated annually in decimal form
+  #   may be given in the form of an integer or a vector
+  # mu: bias (only used in EQP and TRG pricing) evaluated annually in decimal form
+  # choice: desired pricing algorithm, see generate_ud()
+  # u: rate of increase per step (not necessary is choice != 0) 
+  # d:rate of decrease per step (not necessary is choice != 0) 
+  # eur: American or European claim (T -> European, F -> American)
+  # D_CF: vector of Dividends within claim expiration period
+  #   vector in form (time, dividend value, t_2, dv_2, ...)
+  #   where time is in years and value is in desired currency
+    
+  
   # Find T_exp, n, and h
   if(T_exp==0){T_exp=n*h}
   else if(n==0){n=T_exp/h}
