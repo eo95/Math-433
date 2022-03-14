@@ -200,7 +200,7 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
 nonannual_volatility <- function(prices){
   returns_d <- daily_returns(prices)
   sigma_d <- sqrt(sum(returns_d^2)/(length(returns_d)-1))
-  return(sigma_n)
+  return(sigma_d)
 }
 
 daily_returns <- function(daily_prices){
@@ -215,4 +215,16 @@ ann_volatility <- function(prices,numperyear=252){
   sigma_d <- nonannual_volatility(prices)
   sigma <- sqrt(numperyear)*sigma_d
   return(sigma)
+}
+
+# Generic Payoffs
+
+call_payoff            <- function(S,K){
+  output <- ifelse(S>K,S-K,0)
+  return(output)
+}
+
+put_payoff             <- function(S,K){
+  output <- ifelse(K>S,K-S,0)
+  return(output)
 }
