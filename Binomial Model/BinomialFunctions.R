@@ -80,7 +80,7 @@ generate_D_v <- function(vec,n,h,r_v){
     # next interval number
     b = ceiling(CFs[i,1]/h)
     # accumulate value to end of interval
-    r = rv[b]
+    r = r_v[b]
     interest = exp(r*(b*h-a))
     # update output vector
     end_div = interest*CFs[i,2]
