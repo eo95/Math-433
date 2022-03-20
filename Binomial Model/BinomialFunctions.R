@@ -64,7 +64,8 @@ generate_ud <- function(choice, h, r, delta, sigma, mu, K, S, n, u, d){
   return(list(u = u, d = d))
 }
 
-generate_D_v <- function(vec,n,h,r){
+generate_D_v <- function(vec,n,h,r_v){
+  # Decompose vector to time and value components
   output <- rep(0,n)
   len <- length(vec)
   CFs    <- matrix(0,nrow=len/2,ncol=2)
@@ -74,13 +75,14 @@ generate_D_v <- function(vec,n,h,r){
     }
   }
   for (i in 1:(len/2)){
+    # time of dividend
     a = CFs[i,1]
+    # next interval number
     b = ceiling(CFs[i,1]/h)
-    if(is.numeric(r)){
-      interest = exp(r*(b*h-a))
-    } else{
-      interest = exp(integrate(r,a,b*h)$value)
-    }
+    # accumulate value to end of interval
+    r = rv[b]
+    interest = exp(r*(b*h-a))
+    # update output vector
     end_div = interest*CFs[i,2]
     output[b] = output[b] + end_div
   }
@@ -184,7 +186,7 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   if(D_CF[1] == 'None'){
     D_v <- rep(0,n)
   } else {
-    D_v <- generate_D_v(D_CF,n,h,r)
+    D_v <- generate_D_v(D_CF,n,h,r_v)
   }
   
   # Creates u and d
