@@ -132,6 +132,7 @@ binomial_pricing <- function(P,payoff){
   #   K is the strike price though the claim need not actually depend on K
   # Output is a list of matrices for the node values of S, C, A, B.
   S_v <- generate_S_v(P$S,P$n,P$u,P$d, P$D_v)
+  n <- P$n
   C_v <- vector("numeric",2^(n+1)-1)
   A_v <- vector("numeric",2^(n+1)-1)
   B_v <- vector("numeric",2^(n+1)-1)
@@ -182,6 +183,9 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   #vectorize delta
   delta <- rep(delta,n)
   
+  #vectorize sigma
+  sigma <- rep(sigma,n)
+  
   # Creates D_v
   if(D_CF[1] == 'None'){
     D_v <- rep(0,n)
@@ -199,25 +203,7 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
 }
 
 # VOLATILITY FUNCTIONS
-nonannual_volatility <- function(prices){
-  returns_d <- daily_returns(prices)
-  sigma_d <- sqrt(sum(returns_d^2)/(length(returns_d)-1))
-  return(sigma_d)
-}
-
-daily_returns <- function(daily_prices){
-  n <- length(daily_prices)
-  a <- daily_prices[-n]
-  b <- daily_prices[-1]
-  daily_returns <- (b-a)/b
-  return(daily_returns)
-}
-
-ann_volatility <- function(prices,numperyear=252){
-  sigma_d <- nonannual_volatility(prices)
-  sigma <- sqrt(numperyear)*sigma_d
-  return(sigma)
-}
+d
 
 # Generic Payoffs
 
