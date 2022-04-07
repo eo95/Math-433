@@ -13,6 +13,21 @@ one_step_claim <- function(S,Su,Sd,Cu,Cd,r,h,delta=0,D=0) {
   return(c(C,A,B))
 }
 
+generate_S_m <- function(S,n,u,d,D_v) {
+  # Generates the matrix of S values for each node of the binomial tree using S = S[1,1], n, u, d
+  # Output is S_m: an n+1 by n+1 numeric matrix.
+  
+  S_m <- matrix(0,n+1,n+1)
+  S_m[1,1] <- S
+  for(i in 1:n){
+    D <- D_v[i]
+    S_a <- S_m[1:i,i]
+    S_b <- c(S_a[1]*u-D,S_a * d - D)
+    S_m[1:(i+1),i+1] <- S_b
+  }
+  return(S_m)
+}
+
 generate_S_v <- function(S,n,u,d,D_v){
   S_v <- vector("numeric",2^(n+1) - 1)
   S_v[1] <- S
@@ -124,6 +139,43 @@ solve_binomial_pricing <- function(S_v,C_v,A_v,B_v,r,h,n,eur,payoff,K,delta,D_v)
   return(list(S_v,C_v,A_v,B_v))
 }
 
+solve_binomial_pricing_recombine <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,delta,D_v){
+  # Solves the values of C, A, and B for each node of the binomial tree.
+  # Requires the matrix S_m, C_m, A_m, and B_m. As well as r, h, n, delta.
+  # If not a European option, requires the payoff function, K.
+  # Output is a list of numeric matrices: S_m, C_m, A_m, and B_m
+  
+  for(i in seq(n,1,-1)){
+    for(j in seq(1,i)){
+      values   <- one_step_claim(S_m[j,i],S_m[j,i+1],S_m[j+1,i+1],C_m[j,i+1],C_m[j+1,i+1],r,h,delta,D_v[i+1])
+      C_m[j,i] <- values[1]
+      A_m[j,i] <- values[2]
+      B_m[j,i] <- values[3]
+    }
+    if(!eur){
+      C_1 <- C_m[1:i,i]
+      S_i <- S_m[1:i,i]
+      C_2 <- payoff(S_i,K)
+      C_i <- ifelse(C_1>C_2,C_1,C_2)
+      C_m[1:i,i] <- C_i
+    }
+  }
+  collab <- paste("t = ",0:n,sep="")
+  rowlab <- c()
+  for (i in 1:n){
+    rowlab <- c(paste(rowlab[1],"u",sep=""), paste(rowlab,"d",sep=""))
+  }
+  rownames(S_m) <- rowlab
+  colnames(S_m) <- collab
+  rownames(C_m) <- rowlab
+  colnames(C_m) <- collab
+  rownames(A_m) <- rowlab
+  colnames(A_m) <- collab
+  rownames(B_m) <- rowlab
+  colnames(B_m) <- collab
+  return(list(S_m,C_m,A_m,B_m))
+}
+
 binomial_pricing <- function(P,payoff){
   # Function that takes a list of formatted parameters and a payoff function, and implements the binomial model.
   #   Formatted parameters P derived from parametrize()
@@ -131,20 +183,32 @@ binomial_pricing <- function(P,payoff){
   #   payoff in the form function(S,K) where S is an asset price and
   #   K is the strike price though the claim need not actually depend on K
   # Output is a list of matrices for the node values of S, C, A, B.
-  S_v <- generate_S_v(P$S,P$n,P$u,P$d, P$D_v)
-  n <- P$n
-  C_v <- vector("numeric",2^(n+1)-1)
-  A_v <- vector("numeric",2^(n+1)-1)
-  B_v <- vector("numeric",2^(n+1)-1)
-  a <- 2^(n)
-  b <- 2^(n+1)-1
-  S_T <- S_v[a:b]
-  C_v[a:b] <- payoff(S_T,P$K)
-  solution <- solve_binomial_pricing(S_v,C_v,A_v,B_v,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+  recombine = P$recombine
+  if(recombine){
+    S_m <- generate_S_m(P$S,P$n,u,d,D_v)
+    C_m <- matrix(0,P$n+1,P$n+1)
+    D_m <- matrix(0,P$n+1,P$n+1)
+    B_m <- matrix(0,P$n+1,P$n+1)
+    S_T <- S_m[,P$n+1]
+    C_m[,P$n+1] <- payoff(S_T,P$K)
+    solution <- solve_binomial_pricing_recombine(S_m,C_m,D_m,B_m,P$r,h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+  } else {
+    S_v <- generate_S_v(P$S,P$n,P$u,P$d,P$D_v)
+    n <- P$n
+    C_v <- vector("numeric",2^(n+1)-1)
+    A_v <- vector("numeric",2^(n+1)-1)
+    B_v <- vector("numeric",2^(n+1)-1)
+    a <- 2^(n)
+    b <- 2^(n+1)-1
+    S_T <- S_v[a:b]
+    C_v[a:b] <- payoff(S_T,P$K)
+    solution <- solve_binomial_pricing(S_v,C_v,A_v,B_v,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+  }
+  
   return(solution)
 }
 
-parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u=10^8,d=10^8,eur=T,D_CF='None'){
+parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u=10^8,d=10^8,eur=T,D_CF='None',recombine = T){
   # S: Time 0 value of the asset priced in desired currency
   # r: Risk-free rate with respect to desired currency in decimal form
   #   may be given in the form of an integer, a vector, or a function
@@ -166,15 +230,15 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   # D_CF: vector of Dividends within claim expiration period
   #   vector in form (time, dividend value, t_2, dv_2, ...)
   #   where time is in years and value is in desired currency
-    
+  
   
   # Find T_exp, n, and h
   if(T_exp==0){T_exp=n*h}
   else if(n==0){n=T_exp/h}
   else {h=T_exp/n}
   
-  # Creates r_v
-  if(is.numeric(r)){
+  # Handles r_v:
+  if(recombine){
     r_v <- rep(r,n)
   } else {
     r_v <- discretize_r_t(r,n,h)
@@ -198,12 +262,31 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,mu=0,choice=0,u
   u <- ud$u
   d <- ud$d
   
-  P <- list("S"=S,"r_v"=r_v,"T_exp"=T_exp,"n"=n,"h"=h,"K"=K,"sigma"=sigma,"delta"=delta,"D_v"=D_v,"choice"=choice,"u"=u,"d"=d,"eur"=eur)
+  P <- list("S"=S,"r_v"=r_v,"T_exp"=T_exp,"n"=n,"h"=h,"K"=K,"sigma"=sigma,"delta"=delta,"D_v"=D_v,"choice"=choice,"u"=u,"d"=d,"eur"=eur,"recombine"=recombine)
   return(P)
 }
 
 # VOLATILITY FUNCTIONS
-d
+
+nonannual_volatility <- function(prices){
+  returns_d <- daily_returns(prices)
+  sigma_d <- sqrt(sum(returns_d^2)/(length(returns_d)-1))
+  return(sigma_d)
+}
+
+daily_returns <- function(daily_prices){
+  n <- length(daily_prices)
+  a <- daily_prices[-n]
+  b <- daily_prices[-1]
+  daily_returns <- (b-a)/b
+  return(daily_returns)
+}
+
+ann_volatility <- function(prices,numperyear=252){
+  sigma_d <- nonannual_volatility(prices)
+  sigma <- sqrt(numperyear)*sigma_d
+  return(sigma)
+}
 
 # Generic Payoffs
 
