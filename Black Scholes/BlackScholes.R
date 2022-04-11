@@ -1,4 +1,10 @@
 #Black Scholes with or without dividend yeild
+#S = Stock Price
+#K = Strike Price
+#r = risk free rate
+#sigma = volatility
+#T = expiration
+#type ~ Put or Call option
 BlackScholes <- function(S, K, sigma, r, T, delta, type){
   if (type == 0 ){
     d1 <- (log(S/K) + (r - delta + sigma^2/2)*T) / (sigma*sqrt(T))
