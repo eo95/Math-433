@@ -319,7 +319,7 @@ binomialPriceRunSim <- function(P,step_v){
   # P is output of parameterize with the defined parameters for the binomial model
   # step_v is a vector of desired step values of S on a single price run
   ##ex: step_v <- c(0,25,30,70) would result in the prices of S at step 0, 25, 30, 70
-  ## step_v should always include initial price
+  ## step_v should always include initial step 0
   ## if desire an entire run at every step, step_v should be 0:n
   steps <- length(step_v)-1
   diff <- diff(step_v)
@@ -338,7 +338,28 @@ binomialPriceRunSim <- function(P,step_v){
   }
   return(S_v)
 }
-  
+
+blackscholesPriceRunSim <- function(P,time_v){
+  # P is output of parameterize with the defined parameters for the binomial model
+  # time_v is a vector of desired time values of S
+  ##ex: time_v <- c(0,25,30,70) would result in the prices of S at time 0, 25, 30, 70
+  ## time_v should always include initial time 0
+  steps <- length(time_v)-1
+  diff <- diff(time_v)
+  r <- P$r_v[1]
+  delta <- P$delta[1]
+  sigma <- P$sigma[1]
+  S_v <- c(P$S)
+  for(i in 1:steps){
+    S_a <- tail(S_v,1)
+    mean = log(S_a)+(r-delta-sigma^2/2)*diff[i]
+    variance = sigma^2*diff[i]
+    logS_b <- rnorm(1,mean,variance)
+    S_b <- exp(logS_b)
+    S_v <- c(S_v,S_b)
+  }
+  return(S_v)
+}
   
   
 # Barrier Option
