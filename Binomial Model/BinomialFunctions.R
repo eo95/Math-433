@@ -312,6 +312,35 @@ put_payoff             <- function(S,K){
 
 # Exotic Options
 
+# Exotic Option {S_t} Generators
+
+binomialPriceRunSim <- function(P,step_v){
+  # Simulates a run of S values at desired steps. FUNCTION IS IN STEPS not in TIME.
+  # P is output of parameterize with the defined parameters for the binomial model
+  # step_v is a vector of desired step values of S on a single price run
+  ##ex: step_v <- c(0,25,30,70) would result in the prices of S at step 0, 25, 30, 70
+  ## step_v should always include initial price
+  ## if desire an entire run at every step, step_v should be 0:n
+  steps <- length(step_v)-1
+  diff <- diff(step_v)
+  r <- P$r_v[1]
+  u <- P$u[1]
+  d <- P$d[1]
+  delta <- P$delta[1]
+  q <- (exp((r-delta)*P$h)-d)/(u-d)
+  S_v <- c(P$S)
+  for(i in 1:steps){
+    numUps <- rbinom(1,diff[i],q)
+    S_a <- tail(S_v,1)
+    scale <- ((u)^numUps)*((d)^(diff[i]-numUps))
+    S_b <- S_a*scale
+    S_v <- c(S_v,S_b)
+  }
+  return(S_v)
+}
+  
+  
+  
 # Barrier Option
 barrier_pricing <- function(S_v, n, payoff, K, barrier, out=T){
   l     <- 2^n - 1
