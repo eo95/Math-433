@@ -178,6 +178,19 @@ binomial_pricing(P_10.10,payoff=call_payoff)
 ## Homework Problems
 
 
+# Problem 5
+
+P <- parameterize(S=4,K=2,r=1/3,T_exp=2,n=2)
+payoff <- call_payoff
+S_m <- c(4,0,0,6,2,0,9,3,1)
+S_m <- matrix(S_m,3,3)
+C_m <- matrix(0,P$n+1,P$n+1)
+D_m <- matrix(0,P$n+1,P$n+1)
+B_m <- matrix(0,P$n+1,P$n+1)
+S_T <- S_m[,P$n+1]
+C_m[,P$n+1] <- payoff(S_T,P$K)
+solution <- solve_binomial_pricing_recombine(S_m,C_m,D_m,B_m,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+
 # Problem 7
 square_payoff   <- function(S,K){
   return(S^2)
@@ -191,9 +204,9 @@ log_payoff      <- function(S,K){
   return(log(S))
 }
 log_value    <- function(S,u,d,r,n){
-  q <- (u-d)*(1 + r - d)
+  q <- (exp(r) - d)
   output <- (log(S*(d^n))+n*q*log(u/d))
-  output <- output*(1/((1+r)^n))
+  output <- output*exp(-r*n)
   return(output)
 }
 
@@ -254,6 +267,16 @@ for (i in 1:50){
 }
 plot(x,y_1)
 lines(x,y_2)
+
+
+T_exp = 1
+n = 1
+S = 50
+K = 0
+r = 0.05
+choice = 0
+u = 1.5
+d = 0.75
 
 #Log function: n vs price
 x   <- c()
