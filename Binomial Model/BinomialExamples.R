@@ -168,3 +168,135 @@ binomial_pricing(P_10.8,payoff=put_payoff)
 
 P_10.10 <- parameterize(S=100,K=95,r=0.08,T_exp=1,u=1.3,d=0.8,eur=F,n=2)
 binomial_pricing(P_10.10,payoff=call_payoff)
+
+
+
+
+
+
+
+## Homework Problems
+
+
+# Problem 7
+square_payoff   <- function(S,K){
+  return(S^2)
+}
+square_value    <- function(S,u,d,r,n){
+  output <- (S^2)*(((exp(r))*(u+d) - u*d)^n)
+  output <- output*exp(-r*n)
+  return(output)
+}
+log_payoff      <- function(S,K){
+  return(log(S))
+}
+log_value    <- function(S,u,d,r,n){
+  q <- (u-d)*(1 + r - d)
+  output <- (log(S*(d^n))+n*q*log(u/d))
+  output <- output*(1/((1+r)^n))
+  return(output)
+}
+
+
+
+#Create graphs to demonstrate functional relationship
+T_exp = 1
+n = 1
+S = 50
+K = 0
+r = 0.05
+choice = 0
+u = 1.5
+d = 0.75
+
+#Square function: n vs price
+x   <- c()
+y_1 <- c()
+y_2 <- c()
+for (i in 1:50){
+  n = i
+  T_exp = i
+  x      <- append(x, i)
+  P      <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  y_1    <- append(y_1, binomial_pricing(P,square_payoff)[[2]][1])
+  y_2    <- append(y_2, square_value(S,u,d,r,n))
+}
+plot(x,y_1)
+lines(x,y_2)
+
+#Square function: r vs price
+n = 1
+T_exp = 1
+x   <- c()
+y_1 <- c()
+y_2 <- c()
+for (i in 1:50){
+  r = 0.02*i
+  x      <- append(x, i)
+  P      <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  y_1    <- append(y_1, binomial_pricing(P,square_payoff)[[2]][1])
+  y_2    <- append(y_2, square_value(S,u,d,r,n))
+}
+plot(x,y_1)
+lines(x,y_2)
+
+#Square function: S vs price
+r = 0.05
+x   <- c()
+y_1 <- c()
+y_2 <- c()
+for (i in 1:50){
+  S = 10*i
+  x      <- append(x, i)
+  P      <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  y_1    <- append(y_1, binomial_pricing(P,square_payoff)[[2]][1])
+  y_2    <- append(y_2, square_value(S,u,d,r,n))
+}
+plot(x,y_1)
+lines(x,y_2)
+
+#Log function: n vs price
+x   <- c()
+y_1 <- c()
+y_2 <- c()
+for (i in 1:50){
+  n = i
+  T_exp = i
+  x      <- append(x, i)
+  P      <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  y_1    <- append(y_1, binomial_pricing(P,log_payoff)[[2]][1])
+  y_2    <- append(y_2, log_value(S,u,d,r,n))
+}
+plot(x,y_1)
+lines(x,y_2)
+
+#Log function: r vs price
+n = 1
+T_exp = 1
+x   <- c()
+y_1 <- c()
+y_2 <- c()
+for (i in 1:50){
+  r = 0.02*i
+  x      <- append(x, i)
+  P      <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  y_1    <- append(y_1, binomial_pricing(P,log_payoff)[[2]][1])
+  y_2    <- append(y_2, log_value(S,u,d,r,n))
+}
+plot(x,y_1)
+lines(x,y_2)
+
+#Log function: S vs price
+r = 0.05
+x   <- c()
+y_1 <- c()
+y_2 <- c()
+for (i in 1:50){
+  S = 10*i
+  x      <- append(x, i)
+  P      <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  y_1    <- append(y_1, binomial_pricing(P,log_payoff)[[2]][1])
+  y_2    <- append(y_2, log_value(S,u,d,r,n))
+}
+plot(x,y_1)
+lines(x,y_2)
