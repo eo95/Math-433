@@ -306,3 +306,72 @@ put_payoff             <- function(S,K){
   output <- ifelse(K>S,K-S,0)
   return(output)
 }
+
+
+# Exotic Options
+
+# Barrier Option
+barrier_pricing <- function(S_v, n, payoff, K, barrier, out=T){
+  l     <- 2^n - 1
+  up    <- S_v[1] < barrier
+  cross <- F
+  C_v   <- vector("numeric",2^(n+1)-1)
+  for (i in 0:l){
+    path <- i
+    k <- 1
+    j <- 1
+    while(k <= n){
+      #path chooses which direction we go
+      bin   <- path%%2
+      path  <- (path - bin)/2
+      j     <- 2*j + 1
+      #are we in a different position relative to the barrier
+      pos   <- S_v[j] < barrier
+      pos   <- pos != up
+      #shift cross to true if we are, keep it as true from then on
+      cross <- cross || pos
+      #iterate k so we dont go beyond vector limits
+      k     <- k + 1
+    }
+    #we xor because we only want to use payoff if it crosses and its not an out
+    #or it doesnt cross and it is an out
+    if(xor(cross, out)){
+      C_v[j] = payoff(S_v[j], K)
+    } else{
+      C_v[j] = 0
+    }
+  }
+}
+  
+  #Asian Option
+  #we require that n = c(per-1) where per is the number of compoundings of the averaging
+  #per period (assuming evenly distributed) and c is a random constant
+asian_pricing <- function(S_v, n, payoff, K=0, per, geo=F, underlying=T){
+  l     <- 2^n - 1
+  C_v   <- vector("numeric",2^(n+1)-1)
+  c     <- n/(per-1)
+  for (i in 0:l){
+    path <- i
+    k    <- 0
+    j    <- 1
+    sum  <- S_v[j]
+    while(k <= n){
+      #path chooses which direction we go
+      bin   <- path%%2
+      path  <- (path - bin)/2
+      j     <- 2*j + 1
+      k     <- k + 1
+      #are we in an averaging period
+      if (k%%c = per){
+        sum <- sum + S_v[j]
+      }
+    }
+    avg <- sum/per
+    #if the avg is the underlying use it as that, otherwise use as k
+    if(underlying){
+      C_v[j] <- payoff(avg, K)
+    } else{
+      C_v[j] <- payoff(S_v[j],avg)
+    }
+  }
+}
