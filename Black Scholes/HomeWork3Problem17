@@ -1,3 +1,16 @@
+BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
+  d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
+  d2 <- d1 - sigma*sqrt(T_exp)
+  if (!put){
+    price <- S * pnorm(d1) - K*exp(-r*T_exp)*pnorm(d2)
+    return(price)
+  }
+  else {
+    price <- -S * pnorm(-d1) + K*exp(-r*T_exp)*pnorm(-d2)
+    return(price)
+  }
+}
+
 strikes = c(90,95,99,100,105,110)
 pricesTrues  = c(3.433,5.647,5.476,5.829,9.661,14.073)
 impVols = c()
@@ -7,7 +20,7 @@ for(i in 1:length(strikes)){
   K = strikes[i]
   N = 10^5
   sigmas = 1:N/N
-  prices <- BlackScholes(S=100, K, sigmas,r=0.05,T=200/252, delta = 0,put=T)
+  prices <- BlackScholes(S=100, K, sigmas,r=0.05,T_exp=200/252, delta = 0,put=T)
   priceTrue = pricesTrues[i]
   diff <- abs(prices-priceTrue)
   for(i in 1:N){
@@ -15,7 +28,7 @@ for(i in 1:length(strikes)){
       impVol = sigmas[i]
     }
   }
-  modelPrice <- BlackScholes(S=100, K,impVol,r=0.05,T=200/252, delta = 0,put=T)
+  modelPrice <- BlackScholes(S=100, K,impVol,r=0.05,T_exp=200/252, delta = 0,put=T)
   impVols <- c(impVols,impVol)
   modelPrices <- c(modelPrices,modelPrice)
 }
