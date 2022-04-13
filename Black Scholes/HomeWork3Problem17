@@ -1,0 +1,25 @@
+strikes = c(90,95,99,100,105,110)
+pricesTrues  = c(3.433,5.647,5.476,5.829,9.661,14.073)
+impVols = c()
+modelPrices = c()
+
+for(i in 1:length(strikes)){
+  K = strikes[i]
+  N = 10^5
+  sigmas = 1:N/N
+  prices <- BlackScholes(S=100, K, sigmas,r=0.05,T=200/252, delta = 0,put=T)
+  priceTrue = pricesTrues[i]
+  diff <- abs(prices-priceTrue)
+  for(i in 1:N){
+    if(diff[i] == min(diff)){
+      impVol = sigmas[i]
+    }
+  }
+  modelPrice <- BlackScholes(S=100, K,impVol,r=0.05,T=200/252, delta = 0,put=T)
+  impVols <- c(impVols,impVol)
+  modelPrices <- c(modelPrices,modelPrice)
+}
+
+table = cbind(strikes,pricesTrues,impVols,modelPrices)
+
+table
