@@ -36,3 +36,8 @@ for(i in 1:length(strikes)){
 table = cbind(strikes,pricesTrues,impVols,modelPrices)
 
 table
+
+plot(strikes,impVols, type = "o"
+     main = "Implied Volatilities v Strikes of Eur. Put Options",
+     xlab = "Strike Prices",
+     ylab = "Implied Volatility")
