@@ -96,3 +96,23 @@ plot(xData,yData1,xlim = c(45,55),
 lines(xData,yData2, col='green',lty=2)
 lines(xData,yData3, col='red',lty=3)
 legend(51,.40,legend = c("3 Months","6 Months","12 Months"),col=c("black","green","red"),lty=1:3)
+
+# Plots for Monotonic Increasing Nature of Option Prices v Volatility
+
+sigmas <- seq(0,1,10^-5)
+calls <- BlackScholes(100,110,sigmas,.05,3/12)
+
+plot(sigmas,puts,type='l',
+     main = "Call Value v Volatility",
+     sub  = "Parameters: S=100 K=110 r=.05 T=3/12",
+     xlab = "X: Volatility",
+     ylab = "Y: Claim Value of a Call Option")
+
+puts <- BlackScholes(100,90,sigmas,.05,3/12,put=T)
+
+plot(sigmas,puts,type='l',
+     main = "Put Value v Volatility",
+     sub  = "Parameters: S=100 K=90 r=.05 T=3/12",
+     xlab = "X: Volatility",
+     ylab = "Y: Claim Value of a Put Option")
+
