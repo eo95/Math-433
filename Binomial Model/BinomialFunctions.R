@@ -186,13 +186,13 @@ binomial_pricing <- function(P,payoff){
   if(recombine){
     u <- P$u[1]
     d <- P$d[1]
-    S_m <- generate_S_m(P$S,P$n,u,d,P$D_v)
+    S_m <- generate_S_m(P$S,P$n,u,d)
     C_m <- matrix(0,P$n+1,P$n+1)
     D_m <- matrix(0,P$n+1,P$n+1)
     B_m <- matrix(0,P$n+1,P$n+1)
     S_T <- S_m[,P$n+1]
     C_m[,P$n+1] <- payoff(S_T,P$K)
-    solution <- solve_binomial_pricing_recombine(S_m,C_m,D_m,B_m,P$r[1],h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+    solution <- solve_binomial_pricing_recombine(S_m,C_m,D_m,B_m,P$r[1],P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
   } else {
     S_v <- generate_S_v(P$S,P$n,P$u,P$d,P$D_v)
     n <- P$n
