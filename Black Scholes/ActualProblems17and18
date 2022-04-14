@@ -11,22 +11,22 @@ BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
   }
 }
 
-impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,claimVal,sig = 10^-6){
-  sigmaOld = 0.0
-  modelPriceOld = BlackScholes(S,K,sigmaOld,r,T_exp,delta,put)
-  errorOld = abs(modelPrice-claimVal)
-  while(T){
-    sigmaNew = sigmaOld + sig
-    modelPriceNew = BlackScholes(S,K,sigma = sigmaNew,r,T_exp,delta,put)
-    errorNew = abs(modelPriceNew-claimVal)
-    if(errorNew>errorOld & errorOld < 0.01){
-      return(sigmaOld)
+impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,claimVal,steps = 30){
+  sigmas <- c(0,1)
+  print(sigmas)
+  print(mean(sigmas))
+  for(i in 1:steps){
+    sigma_mid <- mean(sigmas)
+    print(sigma_mid)
+    err_mid <- BlackScholes(S,K,sigma_mid,r,T_exp,delta,put)-claimVal
+    if(err_mid<0){
+      sigmas <- c(sigma_mid,sigmas[2])
     } else {
-      sigmaOld = sigmaNew
-      modelPriceOld = modelPriceNew
-      errorOld = errorNew
+      sigmas <- c(sigmas[1],sigma_mid)
     }
+    
   }
+  return(mean(sigmas))
 }
 
 # Problem 17 ----
