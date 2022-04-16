@@ -1,0 +1,56 @@
+barrierPayoff <- function(P,S_vec, lockIn = T, up = T, barrier){
+  # Computes the payoff of a barrier option given a run of price values
+  # P: standard set of parameters used in project
+  # S_vec: the simulated values of underlying
+  # barrier: the barrier of the barrier payoff
+  # Logical Parameters:
+  ## lockIn: True if crossing the barrier locks in the option
+  ## up: true if the barrier is above S_0
+  K <- P$K
+  S_T <- tail(S_vec,1)
+  if(up){
+    if(lockIn){
+      if (max(S_vec) > barrier){
+        if(P$Put){
+          payoffVal <- max{0,K-S_T}
+        } else {
+          payoffVal <- max{0,S_T-K}
+        }
+      } else {
+        payoffVal = 0
+      }
+    } else {
+      if (max(S_vec) < barrier){
+        if(P$put){
+          payoffVal <- max{0,K-S_T}
+        } else {
+          payoffVal <- max{0,S_T-K}
+        }
+      } else {
+        payoffVal = 0
+      }
+    }
+  } else {
+    if(lockIn){
+      if (min(S_vec) < barrier){
+        if(P$Put){
+          payoffVal <- max{0,K-S_T}
+        } else {
+          payoffVal <- max{0,S_T-K}
+        }
+      } else {
+        payoffVal = 0
+      }
+    } else {
+      if (min(S_vec) > barrier){
+        if(P$put){
+          payoffVal <- max{0,K-S_T}
+        } else {
+          payoffVal <- max{0,S_T-K}
+        }
+      } else {
+        payoffVal = 0
+      }
+    }
+  }
+}
