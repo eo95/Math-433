@@ -323,3 +323,41 @@ for (i in 1:50){
 }
 plot(x,y_1)
 lines(x,y_2)
+
+
+
+
+
+# Run time --- 
+T_exp = 1
+n = 1
+S = 50
+K = 0
+r = 0.05
+choice = 0
+u = 1.5
+d = 0.75
+x <- c()
+y <- c()
+for (i in 1:30){
+  n <- i
+  x <- append(x,n)
+  P <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
+  start_time <- Sys.time()
+  append(y, binomial_pricing(P,call_payoff))
+  end_time   <- Sys.time()
+  y          <- append(y, as.numeric(end_time-start_time))
+}
+plot(x,y, col="blue")
+x <- c()
+y <- c()
+for (i in 1:30){
+  n <- i
+  x <- append(x,n)
+  P <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n,recombine=F)
+  start_time <- Sys.time()
+  append(y, binomial_pricing(P,call_payoff))
+  end_time   <- Sys.time()
+  y         <- append(y, as.numeric(end_time-start_time))
+}
+lines(x,y, col="green")
