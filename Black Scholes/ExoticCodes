@@ -53,4 +53,26 @@ barrierPayoff <- function(P,S_vec, lockIn = T, up = T, barrier){
       }
     }
   }
+  return(payoffVal)
 }
+
+asianOption <- function(P,S_vec, S_Texp, avgAsStrike = T, algebraic = T){
+  if(algebraic){
+    avgSt = mean(S_vec)
+  } else {
+    avgSt = exp(mean(log(S_vec)))
+  }
+  if(avgAsStrike){
+    K = avgSt
+  } else {
+    K = P$K
+    S_Texp = avgSt
+  }
+  if(P$put){
+    payoffVal = max(0,K-S_Texp)
+  } else {
+    payoffVal = max{S_Texp-K,0}
+  }
+  return(payoffVal)
+}
+
