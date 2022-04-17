@@ -223,7 +223,6 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,choice=0,u=10^8
   #   may be given in the form of an integer or a vector
   # delta: dividend rate evaluated annually in decimal form
   #   may be given in the form of an integer or a vector
-  # mu: bias (only used in EQP and TRG pricing) evaluated annually in decimal form
   # choice: desired pricing algorithm, see generate_ud()
   # u: rate of increase per step (not necessary is choice != 0) 
   # d:rate of decrease per step (not necessary is choice != 0) 

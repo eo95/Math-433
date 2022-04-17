@@ -338,26 +338,34 @@ choice = 0
 u = 1.5
 d = 0.75
 x <- c()
-y <- c()
-for (i in 1:30){
+y_1 <- c()
+for (i in 1:23){
   n <- i
   x <- append(x,n)
   P <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n)
-  start_time <- Sys.time()
-  append(y, binomial_pricing(P,call_payoff))
-  end_time   <- Sys.time()
-  y          <- append(y, as.numeric(end_time-start_time))
+  avg <- 0
+  for (j in 1:3){
+    start_time <- Sys.time()
+    binomial_pricing(P,call_payoff)
+    end_time   <- Sys.time()
+    avg        <- avg + as.numeric(end_time-start_time)
+  }
+  avg <- avg/5
+  y_1   <- append(y_1, avg)
 }
-plot(x,y, col="blue")
 x <- c()
-y <- c()
-for (i in 1:30){
+y_2 <- c()
+for (i in 1:23){
   n <- i
-  x <- append(x,n)
   P <- parameterize(T_exp=T_exp,S=S,K=K,r=r,choice=choice,u=u,d=d,n=n,recombine=F)
-  start_time <- Sys.time()
-  append(y, binomial_pricing(P,call_payoff))
-  end_time   <- Sys.time()
-  y         <- append(y, as.numeric(end_time-start_time))
+  for (j in 1:3){
+    start_time <- Sys.time()
+    binomial_pricing(P,call_payoff)
+    end_time   <- Sys.time()
+    avg        <- avg + as.numeric(end_time-start_time)
+  }
+  avg <- avg/5
+  y_2   <- append(y_2, avg)
 }
-lines(x,y, col="green")
+plot(x,y_2, col= "blue", type="l", xlab="Number of Steps", ylab="Time (seconds)")
+lines(x,y_1, col="green")
