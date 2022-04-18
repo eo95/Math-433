@@ -128,6 +128,7 @@ delta = 0.01
 callPrices <- BlackScholes(S,K,sigma,r,T_exp,delta)
 putPrices  <- BlackScholes(S,K,sigma,r,T_exp,delta, put = T)
 straddlePrices <- callPrices + putPrices
+K_min <- S*exp(T*(r-delta-sigma^2/2))
 
 plot(K,straddlePrices,type="l",
      xlim = c(90,110),
@@ -136,9 +137,8 @@ plot(K,straddlePrices,type="l",
      sub  = "Parameters: S=100,sigma=0.3,r=0.05,T_exp=1,delta=0.01",
      xlab = "Strike Price",
      ylab = "Value of the Straddle")
-
-K_min <- S*exp(T*(r-delta-sigma^2/2))
 xpoints <- c(K_min,K_min)
 ypoints <- c(0,100)
-lines(xpoints,ypoints,col="blue")
+lines(xpoints,ypoints,col="blue",lty = 2,type = 'l')
+legend(100,25,legend = c("Calculated Strike"),lty = 2)
 
