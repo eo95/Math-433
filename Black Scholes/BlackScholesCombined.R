@@ -92,3 +92,33 @@ black_scholes_discrete_div <- function(P){
 # McDonald Example 12.3
 P <- bs_parameterize(S=41,K=40,sigma=0.3,r=0.08,T_exp=0.25,D_CF=c(3,1/12))
 black_scholes_discrete_div(P)
+
+# THE GREEKS
+gimmeGreeks <- function(P){
+  S     = P$S
+  K     = P$K
+  sigma = P$sigma
+  r     = P$r
+  T_exp = P$T_exp
+  delta = P$delta
+  put   = P$put
+  d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
+  d2 <- d1 - sigma*sqrt(T_exp)
+  if(!put){
+    greekDelta = exp(-delta*T_exp) * qnorm(d1)
+    greekGamma = exp(-delta*T_exp) * dnorm(d1) / (S*sigma*sqrt(T_exp))
+    greekTheta = delta*S*exp(-delta*T_exp)*qnorm(d1) - r*K*exp(-r*T_exp)*qnorm(d2) - K*exp(-r*T_exp)*dnorm(d2)*sigma/(2*sqrt(T_exp)) 
+    greekVega  = S*exp(-delta*T_exp)*dnorm(d1)*sqrt(T_exp)
+    greekRho   = T_exp*K*exp(-r*T_exp)*qnorm(d2)
+    greekPsi   = -T_exp*S*exp(-delta*T_exp)*qnorm(d1)
+  } else {
+    greekDelta = -exp(-delta*T_exp) * qnorm(-d1)
+    greekGamma = exp(-delta*T_exp) * dnorm(d1) / (S*sigma*sqrt(T_exp))
+    greekTheta = delta*S*exp(-delta*T_exp)*qnorm(d1) - r*K*exp(-r*T_exp)*qnorm(d2) - K*exp(-r*T_exp)*dnorm(d2)*sigma/(2*sqrt(T_exp)) + r*K*exp(-r*T_exp) - delta*S*exp(-delta*T_exp)
+    greekVega  = S*exp(-delta*T_exp)*dnorm(d1)*sqrt(T_exp)
+    greekRho   = -T_exp*K*exp(-r*T_exp)*qnorm(-d2)
+    greekPsi   = T_exp*S*exp(-delta*T_exp)*qnorm(-d1)
+  }
+  theGreeks = list("delta" = greekDelta,"gamma"=greekGamma,"theta"=greekTheta,"vega"=greekVega,"rho"=greekRho,"psi"=greekPsi)
+    return(theGreeks)
+}
