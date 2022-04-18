@@ -42,13 +42,13 @@ black_scholes <- function(P, type){
   if (type == 0 ){
     d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
     d2 <- d1 - sigma*sqrt(T_exp)
-    price <- S * pnorm(d1) - K*exp(-r*T_exp)*pnorm(d2)
+    price <- S*exp(-delta*T_exp) * pnorm(d1) - K*exp(-r*T_exp)*pnorm(d2)
     return(price)
   }
   if (type== 1 ){
     d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
     d2 <- d1 - sigma*sqrt(T_exp)
-    price <- -S * pnorm(-d1) + K*exp(-r*T_exp)*pnorm(-d2)
+    price <- -S*exp(-delta*T_exp) * pnorm(-d1) + K*exp(-r*T_exp)*pnorm(-d2)
     return(price)
   }
 }
