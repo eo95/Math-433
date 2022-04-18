@@ -84,7 +84,7 @@ prepaid_black_scholes <- function(P, F_S, F_K, extra_P, type){
   T_exp = P$T_exp
   delta = P$delta[1]
   F0_s = F_S(S,P,extra_P)
-  F0_k = F_K(S,P,extra_P)
+  F0_k = F_K(K,P,extra_P)
   if (type == 0 ){
     d1 <- (log(F0_s/F0_k) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
     d2 <- d1 - sigma*sqrt(T_exp)
@@ -105,3 +105,24 @@ prepaid_black_scholes <- function(P, F_S, F_K, extra_P, type){
 #This is in cases where we are using exotic options rather than a put or call
 #Because these can, for the most part, not be found explicitly we need to 
     #simulate the black scholes model to find the needed values for pricing
+blackscholesPriceRunSim <- function(P,time_v){
+  # P is output of parameterize with the defined parameters for the binomial model
+  # time_v is a vector of desired time values of S
+  ##ex: time_v <- c(0,25,30,70) would result in the prices of S at time 0, 25, 30, 70
+  ## time_v should always include initial time 0
+  steps <- length(time_v)-1
+  diff <- diff(time_v)
+  r <- P$r_v[1]
+  delta <- P$delta[1]
+  sigma <- P$sigma[1]
+  S_v <- c(P$S)
+  for(i in 1:steps){
+    S_a <- tail(S_v,1)
+    mean = log(S_a)+(r-delta-sigma^2/2)*diff[i]
+    variance = sigma^2*diff[i]
+    logS_b <- rnorm(1,mean,variance)
+    S_b <- exp(logS_b)
+    S_v <- c(S_v,S_b)
+  }
+  return(S_v)
+}
