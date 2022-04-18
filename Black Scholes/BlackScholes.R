@@ -10,13 +10,13 @@ BlackScholes <- function(S, K, sigma, r, T, delta, type){
   if (type == 0 ){
     d1 <- (log(S/K) + (r - delta + sigma^2/2)*T) / (sigma*sqrt(T))
     d2 <- d1 - sigma*sqrt(T)
-    price <- S * pnorm(d1) - K*exp(-r*T)*pnorm(d2)
+    price <- S*exp(-delta*T_exp) * pnorm(d1) - K*exp(-r*T)*pnorm(d2)
     return(price)
   }
   if (type== 1 ){
     d1 <- (log(S/K) + (r - delta + sigma^2/2)*T) / (sigma*sqrt(T))
     d2 <- d1 - sigma*sqrt(T)
-    price <- -S * pnorm(-d1) + K*exp(-r*T)*pnorm(-d2)
+    price <- -S*exp(-delta*T_exp) * pnorm(-d1) + K*exp(-r*T)*pnorm(-d2)
     return(price)
   }
 }
