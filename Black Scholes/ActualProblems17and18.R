@@ -2,11 +2,11 @@ BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
   d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
   d2 <- d1 - sigma*sqrt(T_exp)
   if (!put){
-    price <- S * pnorm(d1) - K*exp(-r*T_exp)*pnorm(d2)
+    price <- S * exp(-delta*T_exp) *pnorm(d1) - K*exp(-r*T_exp)*pnorm(d2)
     return(price)
   }
   else {
-    price <- -S * pnorm(-d1) + K*exp(-r*T_exp)*pnorm(-d2)
+    price <- -S * exp(-delta*T_exp) * pnorm(-d1) + K*exp(-r*T_exp)*pnorm(-d2)
     return(price)
   }
 }
@@ -116,4 +116,29 @@ plot(sigmas,puts,type='l',
      sub  = "Parameters: S=100 K=90 r=.05 T=3/12",
      xlab = "X: Volatility",
      ylab = "Y: Claim Value of a Put Option")
+
+# Plot to show HW 3 Q 3 was correct solution
+S <- 100
+K <- seq(70,130,.001)
+sigma <- .3
+r <- .05
+T_exp <- 1
+delta = 0.01
+
+callPrices <- BlackScholes(S,K,sigma,r,T_exp,delta)
+putPrices  <- BlackScholes(S,K,sigma,r,T_exp,delta, put = T)
+straddlePrices <- callPrices + putPrices
+
+plot(K,straddlePrices,type="l",
+     xlim = c(90,110),
+     ylim = c(23,25),
+     main = "Price of Straddle over Strike",
+     sub  = "Parameters: S=100,sigma=0.3,r=0.05,T_exp=1,delta=0.01",
+     xlab = "Strike Price",
+     ylab = "Value of the Straddle")
+
+K_min <- S*exp(T*(r-delta-sigma^2/2))
+xpoints <- c(K_min,K_min)
+ypoints <- c(0,100)
+lines(xpoints,ypoints,col="blue")
 
