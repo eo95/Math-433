@@ -230,6 +230,9 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,choice=0,u=10^8
   # D_CF: vector of Dividends within claim expiration period
   #   vector in form (time, dividend value, t_2, dv_2, ...)
   #   where time is in years and value is in desired currency
+  # recombine: specifies whether the algorithm should be performed using a recombining
+  #    tree or a non-recombining tree. Where there are no discrete dividends
+  #    or variables changing over time a recombining model is ideal
   
   
   # Find T_exp, n, and h
