@@ -127,7 +127,7 @@ blackscholesPriceRunSim <- function(P,time_v){
   return(S_v)
 }
 # THE GREEKS
-gimmeGreeks <- function(P){
+theGreeks <- function(P){
   S     = P$S
   K     = P$K
   sigma = P$sigma
