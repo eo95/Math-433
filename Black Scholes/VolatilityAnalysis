@@ -128,3 +128,28 @@ plot(tesco.options.strikes,tesco.options.impVol, type = 'o',
      xlab = "Strike Price",
      ylab = "Implied Volatility",
      sub  ="\nParameters: S=277.5,r=.004452,T_exp=10/252")
+
+# Beautiful Daily Price and Returns Plots for NYT Data
+
+NYT.table  <- read.csv(file.choose()) # OPEN NYT DATA FILE
+NYT.prices <- NYT.table$Close
+plot(ts(NYT.prices),
+     main="Daily Prices of NYT",
+     xlab="Time (in days)",
+     ylab="Price of NYT ($)")
+
+NYT.returns <- daily_returns(NYT.prices)
+hist(NYT.returns,
+     main = "Histogram of NYT Daily Returns",
+     xlab = "NYT Daily Returns")
+ystd = c(1,1)
+NYT.sigma <- ann_volatility(NYT.prices,numperyear=1)
+plot((NYT.returns),type='l',
+     main = "NYT Daily Returns vs Time",
+     xlab = "Time (in days)",
+     ylab = "Daily Returns")
+abline(0,0)
+lines(x=c(-10^6,10^6),y=ystd*NYT.sigma,col = 'red',lty=2)
+lines(x=c(-10^6,10^6),y=ystd*2*NYT.sigma,col = 'red',lty=2)
+lines(x=c(-10^6,10^6),y=ystd*-NYT.sigma,col = 'red',lty=2)
+lines(x=c(-10^6,10^6),y=ystd*-2*NYT.sigma,col= 'red',lty=2)
