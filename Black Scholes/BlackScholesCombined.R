@@ -176,3 +176,205 @@ Combined[1] <- '--'
 Table12.2   <- cbind(Results40,Results45,Combined)
 rownames(Table12.2) <- names
 Table12.2
+
+
+# Plots of the greeks with Novartis Parameters
+NOVN.table <- read.csv(file.choose()) # CHOOSE NOVN DATA TABLE
+NOVN.prices <- NOVN.table$Close
+NOVN.sigma  <- ann_volatility(NOVN.prices)
+P.Call.NOVN.1mo  <- list(S=77.64,K=78,r=-0.0075,delta=0.0363,sigma=NOVN.sigma,put=F,T_exp=1/12)
+P.Call.NOVN.3mo  <- list(S=77.64,K=78,r=-0.0075,delta=0.0363,sigma=NOVN.sigma,put=F,T_exp=3/12)
+P.Call.NOVN.1yr  <- list(S=77.64,K=78,r=-0.0075,delta=0.0363,sigma=NOVN.sigma,put=F,T_exp=1)
+P.Put.NOVN.1mo   <- list(S=77.64,K=78,r=-0.0075,delta=0.0363,sigma=NOVN.sigma,put=T,T_exp=1/12)
+P.Put.NOVN.3mo   <- list(S=77.64,K=78,r=-0.0075,delta=0.0363,sigma=NOVN.sigma,put=T,T_exp=3/12)
+P.Put.NOVN.1yr   <- list(S=77.64,K=78,r=-0.0075,delta=0.0363,sigma=NOVN.sigma,put=T,T_exp=1)
+StockPrices <- seq(70,90,.1)
+
+# Delta Call Graph
+Delta.Call.1mo <- c()
+Delta.Call.3mo <- c()
+Delta.Call.1yr <- c()
+for(i in StockPrices){
+  P.Call.NOVN.1mo$S <- i
+  DeltaNew  <- theGreeks(P.Call.NOVN.1mo)$delta
+  Delta.Call.1mo <- c(Delta.Call.1mo,DeltaNew)
+  P.Call.NOVN.3mo$S <- i
+  DeltaNew  <- theGreeks(P.Call.NOVN.3mo)$delta
+  Delta.Call.3mo <- c(Delta.Call.3mo,DeltaNew)
+  P.Call.NOVN.1yr$S <- i
+  DeltaNew  <- theGreeks(P.Call.NOVN.1yr)$delta
+  Delta.Call.1yr <- c(Delta.Call.1yr,DeltaNew)
+}
+
+# Delta Put Graph
+Delta.Put.1mo <- c()
+Delta.Put.3mo <- c()
+Delta.Put.1yr <- c()
+for(i in StockPrices){
+  P.Put.NOVN.1mo$S <- i
+  DeltaNew  <- theGreeks(P.Put.NOVN.1mo)$delta
+  Delta.Put.1mo <- c(Delta.Put.1mo,DeltaNew)
+  P.Put.NOVN.3mo$S <- i
+  DeltaNew  <- theGreeks(P.Put.NOVN.3mo)$delta
+  Delta.Put.3mo <- c(Delta.Put.3mo,DeltaNew)
+  P.Put.NOVN.1yr$S <- i
+  DeltaNew  <- theGreeks(P.Put.NOVN.1yr)$delta
+  Delta.Put.1yr <- c(Delta.Put.1yr,DeltaNew)
+}
+plot(StockPrices,Delta.Call.1mo,type='l',
+     main = "Call and Put Deltas v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Delta",
+     ylim = c(-1,1))
+lines(StockPrices,Delta.Call.3mo,type='l',col='blue')
+lines(StockPrices,Delta.Call.1yr,type='l',col='darkgreen')
+lines(StockPrices,Delta.Put.1mo,type='l',col='darkred')
+lines(StockPrices,Delta.Put.3mo,type='l',col='purple')
+lines(StockPrices,Delta.Put.1yr,type='l',col='darkorange')
+abline(0,0)
+legend(82,0.25,legend=c("Call with 1 Month Expiry","Call: T = 3 Month","Call with 1 Year Expiry","Put with 1 Month Expiry","Put with 3 Month Expiry","Put with 1 Year Expiry"),cex=0.6,col=c('black','blue','darkgreen','darkred','purple','darkorange'),lty=c(1,1,1,1,1,1))
+
+
+# Gamma Put Graph
+Gamma.Call.1mo <- c()
+Gamma.Call.3mo <- c()
+Gamma.Call.1yr <- c()
+for(i in StockPrices){
+  P.Call.NOVN.1mo$S <- i
+  GammaNew  <- theGreeks(P.Call.NOVN.1mo)$gamma
+  Gamma.Call.1mo <- c(Gamma.Call.1mo,GammaNew)
+  P.Call.NOVN.3mo$S <- i
+  GammaNew  <- theGreeks(P.Call.NOVN.3mo)$gamma
+  Gamma.Call.3mo <- c(Gamma.Call.3mo,GammaNew)
+  P.Call.NOVN.1yr$S <- i
+  GammaNew  <- theGreeks(P.Call.NOVN.1yr)$gamma
+  Gamma.Call.1yr <- c(Gamma.Call.1yr,GammaNew)
+}
+plot(StockPrices,Gamma.Call.1mo,type='l',
+     main = "Call and Call Gammas v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Gamma")
+lines(StockPrices,Gamma.Call.3mo,type='l',col='blue')
+lines(StockPrices,Gamma.Call.1yr,type='l',col='darkgreen')
+legend(83,0.11,legend=c("Call: T = 1 Month","Call: T = 3 Month","Call: T = 1 Year"),cex=0.6,col=c('black','blue','darkgreen'),lty=c(1,1,1))
+
+# Vega Call Graph
+Vega.Call.1mo <- c()
+Vega.Call.3mo <- c()
+Vega.Call.1yr <- c()
+for(i in StockPrices){
+  P.Call.NOVN.1mo$S <- i
+  VegaNew  <- theGreeks(P.Call.NOVN.1mo)$vega
+  Vega.Call.1mo <- c(Vega.Call.1mo,VegaNew)
+  P.Call.NOVN.3mo$S <- i
+  VegaNew  <- theGreeks(P.Call.NOVN.3mo)$vega
+  Vega.Call.3mo <- c(Vega.Call.3mo,VegaNew)
+  P.Call.NOVN.1yr$S <- i
+  VegaNew  <- theGreeks(P.Call.NOVN.1yr)$vega
+  Vega.Call.1yr <- c(Vega.Call.1yr,VegaNew)
+}
+plot(StockPrices,Vega.Call.1mo,type='l',
+     main = "Call and Put Vegas v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Vega",
+     ylim = c(0,.4))
+lines(StockPrices,Vega.Call.3mo,type='l',col='blue')
+lines(StockPrices,Vega.Call.1yr,type='l',col='darkgreen')
+legend(83,0.4,legend=c("Call: T = 1 Month","Call: T = 3 Month","Call: T = 1 Year"),cex=0.6,col=c('black','blue','darkgreen'),lty=c(1,1,1))
+
+# Theta Call Graph
+Theta.Call.1mo <- c()
+Theta.Call.3mo <- c()
+Theta.Call.1yr <- c()
+for(i in StockPrices){
+  P.Call.NOVN.1mo$S <- i
+  ThetaNew  <- theGreeks(P.Call.NOVN.1mo)$theta
+  Theta.Call.1mo <- c(Theta.Call.1mo,ThetaNew)
+  P.Call.NOVN.3mo$S <- i
+  ThetaNew  <- theGreeks(P.Call.NOVN.3mo)$theta
+  Theta.Call.3mo <- c(Theta.Call.3mo,ThetaNew)
+  P.Call.NOVN.1yr$S <- i
+  ThetaNew  <- theGreeks(P.Call.NOVN.1yr)$theta
+  Theta.Call.1yr <- c(Theta.Call.1yr,ThetaNew)
+}
+plot(StockPrices,Theta.Call.1mo,type='l',
+     main = "Call Thetas v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Call Theta")
+lines(StockPrices,Theta.Call.3mo,type='l',col='blue')
+lines(StockPrices,Theta.Call.1yr,type='l',col='darkgreen')
+abline(0,0)
+legend(83,-.010,legend=c("Call: T = 1 Month","Call: T = 3 Month","Call: T = 1 Year"),cex=0.6,col=c('black','blue','darkgreen'),lty=c(1,1,1))
+
+# Theta Put Graph
+Theta.Put.1mo <- c()
+Theta.Put.3mo <- c()
+Theta.Put.1yr <- c()
+for(i in StockPrices){
+  P.Put.NOVN.1mo$S <- i
+  ThetaNew  <- theGreeks(P.Put.NOVN.1mo)$theta
+  Theta.Put.1mo <- c(Theta.Put.1mo,ThetaNew)
+  P.Put.NOVN.3mo$S <- i
+  ThetaNew  <- theGreeks(P.Put.NOVN.3mo)$theta
+  Theta.Put.3mo <- c(Theta.Put.3mo,ThetaNew)
+  P.Put.NOVN.1yr$S <- i
+  ThetaNew  <- theGreeks(P.Put.NOVN.1yr)$theta
+  Theta.Put.1yr <- c(Theta.Put.1yr,ThetaNew)
+}
+plot(StockPrices,Theta.Put.1mo,type='l',
+     main = "Put Thetas v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Put Theta")
+lines(StockPrices,Theta.Put.3mo,type='l',col='blue')
+lines(StockPrices,Theta.Put.1yr,type='l',col='darkgreen')
+abline(0,0)
+legend(83,-.010,legend=c("Put: T = 1 Month","Put: T = 3 Month","Put: T = 1 Year"),cex=0.6,col=c('black','blue','darkgreen'),lty=c(1,1,1))
+
+# Rho Call Graph
+Rho.Call.1mo <- c()
+Rho.Call.3mo <- c()
+Rho.Call.1yr <- c()
+for(i in StockPrices){
+  P.Call.NOVN.1mo$S <- i
+  RhoNew  <- theGreeks(P.Call.NOVN.1mo)$rho
+  Rho.Call.1mo <- c(Rho.Call.1mo,RhoNew)
+  P.Call.NOVN.3mo$S <- i
+  RhoNew  <- theGreeks(P.Call.NOVN.3mo)$rho
+  Rho.Call.3mo <- c(Rho.Call.3mo,RhoNew)
+  P.Call.NOVN.1yr$S <- i
+  RhoNew  <- theGreeks(P.Call.NOVN.1yr)$rho
+  Rho.Call.1yr <- c(Rho.Call.1yr,RhoNew)
+}
+plot(StockPrices,Rho.Call.1mo,type='l',
+     main = "Call Rhos v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Call Rho",
+     ylim = c(0,0.6))
+lines(StockPrices,Rho.Call.3mo,type='l',col='blue')
+lines(StockPrices,Rho.Call.1yr,type='l',col='darkgreen')
+legend(70,0.5,legend=c("Call: T = 1 Month","Call: T = 3 Month","Call: T = 1 Year"),cex=0.6,col=c('black','blue','darkgreen'),lty=c(1,1,1))
+
+# Psi Call Graph
+Psi.Call.1mo <- c()
+Psi.Call.3mo <- c()
+Psi.Call.1yr <- c()
+for(i in StockPrices){
+  P.Call.NOVN.1mo$S <- i
+  PsiNew  <- theGreeks(P.Call.NOVN.1mo)$psi
+  Psi.Call.1mo <- c(Psi.Call.1mo,PsiNew)
+  P.Call.NOVN.3mo$S <- i
+  PsiNew  <- theGreeks(P.Call.NOVN.3mo)$psi
+  Psi.Call.3mo <- c(Psi.Call.3mo,PsiNew)
+  P.Call.NOVN.1yr$S <- i
+  PsiNew  <- theGreeks(P.Call.NOVN.1yr)$psi
+  Psi.Call.1yr <- c(Psi.Call.1yr,PsiNew)
+}
+plot(StockPrices,Psi.Call.1mo,type='l',
+     main = "Call Psis v NOVN Prices",
+     xlab = "NOVN (CHF)",
+     ylab = "Call Psi",
+     ylim = c(-0.8,0))
+lines(StockPrices,Psi.Call.3mo,type='l',col='blue')
+lines(StockPrices,Psi.Call.1yr,type='l',col='darkgreen')
+legend(70,-0.55,legend=c("Call: T = 1 Month","Call: T = 3 Month","Call: T = 1 Year"),cex=0.6,col=c('black','blue','darkgreen'),lty=c(1,1,1))
+
