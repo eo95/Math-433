@@ -138,20 +138,41 @@ theGreeks <- function(P){
   d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
   d2 <- d1 - sigma*sqrt(T_exp)
   if(!put){
-    greekDelta = exp(-delta*T_exp) * qnorm(d1)
+    greekDelta = exp(-delta*T_exp) * pnorm(d1)
     greekGamma = exp(-delta*T_exp) * dnorm(d1) / (S*sigma*sqrt(T_exp))
-    greekTheta = delta*S*exp(-delta*T_exp)*qnorm(d1) - r*K*exp(-r*T_exp)*qnorm(d2) - K*exp(-r*T_exp)*dnorm(d2)*sigma/(2*sqrt(T_exp)) 
-    greekVega  = S*exp(-delta*T_exp)*dnorm(d1)*sqrt(T_exp)
-    greekRho   = T_exp*K*exp(-r*T_exp)*qnorm(d2)
-    greekPsi   = -T_exp*S*exp(-delta*T_exp)*qnorm(d1)
+    greekTheta = (delta*S*exp(-delta*T_exp)*pnorm(d1) - r*K*exp(-r*T_exp)*pnorm(d2) - K*exp(-r*T_exp)*dnorm(d2)*sigma/(2*sqrt(T_exp)))/365
+    greekVega  = (S*exp(-delta*T_exp)*dnorm(d1)*sqrt(T_exp))/100
+    greekRho   = (T_exp*K*exp(-r*T_exp)*pnorm(d2))/100
+    greekPsi   = (-T_exp*S*exp(-delta*T_exp)*pnorm(d1))/100
   } else {
-    greekDelta = -exp(-delta*T_exp) * qnorm(-d1)
+    greekDelta = -exp(-delta*T_exp) * pnorm(-d1)
     greekGamma = exp(-delta*T_exp) * dnorm(d1) / (S*sigma*sqrt(T_exp))
-    greekTheta = delta*S*exp(-delta*T_exp)*qnorm(d1) - r*K*exp(-r*T_exp)*qnorm(d2) - K*exp(-r*T_exp)*dnorm(d2)*sigma/(2*sqrt(T_exp)) + r*K*exp(-r*T_exp) - delta*S*exp(-delta*T_exp)
-    greekVega  = S*exp(-delta*T_exp)*dnorm(d1)*sqrt(T_exp)
-    greekRho   = -T_exp*K*exp(-r*T_exp)*qnorm(-d2)
-    greekPsi   = T_exp*S*exp(-delta*T_exp)*qnorm(-d1)
+    greekTheta = (delta*S*exp(-delta*T_exp)*pnorm(d1) - r*K*exp(-r*T_exp)*pnorm(d2) - K*exp(-r*T_exp)*dnorm(d2)*sigma/(2*sqrt(T_exp)) + r*K*exp(-r*T_exp) - delta*S*exp(-delta*T_exp))/365
+    greekVega  = (S*exp(-delta*T_exp)*dnorm(d1)*sqrt(T_exp))/100
+    greekRho   = (-T_exp*K*exp(-r*T_exp)*pnorm(-d2))/100
+    greekPsi   = (T_exp*S*exp(-delta*T_exp)*pnorm(-d1))/100
   }
   theGreeks = list("delta" = greekDelta,"gamma"=greekGamma,"theta"=greekTheta,"vega"=greekVega,"rho"=greekRho,"psi"=greekPsi)
-    return(theGreeks)
+  return(theGreeks)
 }
+
+# Verification of Greeks - McDonald Table 12.2 Replication
+
+P.40Call <- list(S=40,sigma=0.3,r=0.08,T_exp=91/365,K=40,put=F,delta=0)
+P.40Call.Price <- black_scholes(P.40Call)
+P.40Call.Greeks <- theGreeks(P.40Call)
+P.40Call.Greeks
+P.45Call <- list(S=40,sigma=0.3,r=0.08,T_exp=91/365,K=45,put=F,delta=0)
+P.45Call.Price <- black_scholes(P.45Call)
+P.45Call.Greeks <- theGreeks(P.45Call)
+P.45Call.Greeks
+
+
+names    <- c("Weights","Price","Delta","Gamma","Vega","Theta","Rho")
+Results40  <- round(c(1,P.40Call.Price,P.40Call.Greeks$delta,P.40Call.Greeks$gamma,P.40Call.Greeks$vega,P.40Call.Greeks$theta,P.40Call.Greeks$rho),5)
+Results45  <- round(c(-1,P.45Call.Price,P.45Call.Greeks$delta,P.45Call.Greeks$gamma,P.45Call.Greeks$vega,P.45Call.Greeks$theta,P.45Call.Greeks$rho),5)
+Combined   <- Results40-Results45
+Combined[1] <- '--'
+Table12.2   <- cbind(Results40,Results45,Combined)
+rownames(Table12.2) <- names
+Table12.2
