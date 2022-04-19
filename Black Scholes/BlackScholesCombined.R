@@ -118,10 +118,10 @@ blackscholesPriceRunSim <- function(P,time_v){
   S_v <- c(P$S)
   for(i in 1:steps){
     S_a <- tail(S_v,1)
-    mean = log(S_a)+(r-delta-sigma^2/2)*diff[i]
+    mean = (r-delta-sigma^2/2)*diff[i]
     variance = sigma^2*diff[i]
-    logS_b <- rnorm(1,mean,variance)
-    S_b <- exp(logS_b)
+    sd = sqrt(variance)
+    S_b <- S_a*rlnorm(1,mean,sd)
     S_v <- c(S_v,S_b)
   }
   return(S_v)
