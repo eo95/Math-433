@@ -348,7 +348,7 @@ blackscholesPriceRunSim <- function(P,time_v){
   ## time_v should always include initial time 0
   steps <- length(time_v)-1
   diff <- diff(time_v)
-  r <- P$r_v[1]
+  r <- P$r[1]
   delta <- P$delta[1]
   sigma <- P$sigma[1]
   S_v <- c(P$S)
