@@ -172,3 +172,27 @@ theNs <- c(theNs,"Infinity")
 table14.1 <- data.frame(theNs,AveragePriceCallPrice,AveragePricePutPrice,AverageStrikeCallPrice,AverageStrikePutPrice)
 colnames(table14.1) <- c("N","AvgPriceCall","AvgPricePut","AvgStrikeCall","AvgStrikePut")
 table14.1
+
+# Using the BS assumptions to simulate the asian option price. Demonstrating the function and the simulator are working.
+
+AvgPriceCallPrem   <- 0
+AvgPricePutPrem    <- 0
+AvgStrikeCallPrem  <- 0
+AvgStrikePutPrem   <- 0
+for(i in 1:10000){
+  S_vec <- blackscholesPriceRunSim(P.Call,time_v = (0:1000)/1000)
+  AvgPriceCallPrem   <- AvgPriceCallPrem  + exp(-.08)*asianPayoff(P.Call,S_vec,S_Texp=tail(S_vec,1),avgAsStrike = F,algebraic=F)
+  AvgPricePutPrem    <- AvgPricePutPrem   + exp(-.08)*asianPayoff(P.Put,S_vec,S_Texp=tail(S_vec,1),avgAsStrike = F,algebraic=F)
+  AvgStrikeCallPrem  <- AvgStrikeCallPrem + exp(-.08)*asianPayoff(P.Call,S_vec,S_Texp=tail(S_vec,1),avgAsStrike = T,algebraic=F)
+  AvgStrikePutPrem   <- AvgStrikePutPrem  + exp(-.08)*asianPayoff(P.Put,S_vec,S_Texp=tail(S_vec,1),avgAsStrike = T,algebraic=F)
+}
+AveragePriceCallPrice  <- c(AveragePriceCallPrice, AvgPriceCallPrem/10000)
+AveragePricePutPrice   <- c(AveragePricePutPrice,  AvgPricePutPrem/10000)
+AverageStrikeCallPrice <- c(AverageStrikeCallPrice,AvgStrikeCallPrem/10000)
+AverageStrikePutPrice  <- c(AverageStrikePutPrice, AvgStrikePutPrem/10000)
+
+theNs <- c(theNs,"BS Sim")
+table14.1WithSim <- data.frame(theNs,AveragePriceCallPrice,AveragePricePutPrice,AverageStrikeCallPrice,AverageStrikePutPrice)
+colnames(table14.1) <- c("N","AvgPriceCall","AvgPricePut","AvgStrikeCall","AvgStrikePut")
+table14.1WithSim
+
