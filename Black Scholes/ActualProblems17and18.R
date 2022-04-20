@@ -106,16 +106,16 @@ calls <- BlackScholes(100,110,sigmas,.05,3/12)
 plot(sigmas,puts,type='l',
      main = "Call Value v Volatility",
      sub  = "Parameters: S=100 K=110 r=.05 T=3/12",
-     xlab = "X: Volatility\n",
-     ylab = "Y: Claim Value of a Call Option")
+     xlab = "Volatility\n",
+     ylab = "Claim Value of a Call Option")
 
 puts <- BlackScholes(100,90,sigmas,.05,3/12,put=T)
 
 plot(sigmas,puts,type='l',
      main = "Put Value v Volatility",
      sub  = "Parameters: S=100 K=90 r=.05 T=3/12",
-     xlab = "X: Volatility\n",
-     ylab = "Y: Claim Value of a Put Option")
+     xlab = "Volatility\n",
+     ylab = "Claim Value of a Put Option")
 
 # Plot to show HW 3 Q 3 was correct solution
 S <- 100
@@ -135,10 +135,10 @@ plot(K,straddlePrices,type="l",
      ylim = c(23,25),
      main = "Price of Straddle over Strike",
      sub  = "Parameters: S=100,sigma=0.3,r=0.05,T_exp=1,delta=0.01",
-     xlab = "Strike Price",
+     xlab = "Strike Price\n",
      ylab = "Value of the Straddle")
 xpoints <- c(K_min,K_min)
 ypoints <- c(0,100)
 lines(xpoints,ypoints,col="blue",lty = 2,type = 'l')
-legend(100,25,legend = c("Calculated Strike"),lty = 2)
+legend(100,25,cex=0.8,legend = c("Calculated Strike"),lty = 2,col='blue')
 
