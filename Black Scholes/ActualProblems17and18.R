@@ -106,7 +106,7 @@ calls <- BlackScholes(100,110,sigmas,.05,3/12)
 plot(sigmas,puts,type='l',
      main = "Call Value v Volatility",
      sub  = "Parameters: S=100 K=110 r=.05 T=3/12",
-     xlab = "X: Volatility",
+     xlab = "X: Volatility\n",
      ylab = "Y: Claim Value of a Call Option")
 
 puts <- BlackScholes(100,90,sigmas,.05,3/12,put=T)
@@ -114,7 +114,7 @@ puts <- BlackScholes(100,90,sigmas,.05,3/12,put=T)
 plot(sigmas,puts,type='l',
      main = "Put Value v Volatility",
      sub  = "Parameters: S=100 K=90 r=.05 T=3/12",
-     xlab = "X: Volatility",
+     xlab = "X: Volatility\n",
      ylab = "Y: Claim Value of a Put Option")
 
 # Plot to show HW 3 Q 3 was correct solution
