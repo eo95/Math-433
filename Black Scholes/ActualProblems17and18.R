@@ -96,7 +96,7 @@ plot(xData,yData1,xlim = c(45,55),
      type = "l")
 lines(xData,yData2, col='green',lty=2)
 lines(xData,yData3, col='red',lty=3)
-legend(51,.40,legend = c("3 Months","6 Months","12 Months"),col=c("black","green","red"),lty=1:3)
+legend(51,.40,cex = 0.8,legend = c("T = 3 Mo.","T=6 Mo.","T = 12 Mo."),col=c("black","green","red"),lty=1:3)
 
 # Plots for Monotonic Increasing Nature of Option Prices v Volatility
 
