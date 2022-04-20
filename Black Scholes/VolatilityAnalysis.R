@@ -27,7 +27,7 @@ plot(x=seq(30/252,756/252,1/252),y=adobe.sigmas,type = 'l',
      ylab = 'Volatility',
      )
 lines(x=c(0,10),y=c(adobe.impVol,adobe.impVol),type='l',col='green',lty=2)
-legend(1.9,.55,legend = c("Historical Volatility","Implied Volatility"),col=c("black","green"),lty=1:2)
+legend(1.9,.55,cex=0.6,legend = c("Historical Volatility","Implied Volatility"),col=c("black","green"),lty=1:2)
 
 
 # Comparing Implied Vol of Call Options at Same Expiry different Strikes
@@ -44,8 +44,6 @@ for(i in 1:5){
   BSprice <- BlackScholes(S=452.13,K=adobe.options.strikes[i],r=0.0033,T_exp=54/252,sigma = sigma)
   adobe.options.BSprices <- c(adobe.options.BSprices,BSprice)
 }
-
-
 
 tableOfAdobeCallsDifferentK <- cbind(adobe.options.strikes,adobe.options.prices,adobe.options.impVol,adobe.options.BSprices)
 tableOfAdobeCallsDifferentK
@@ -64,7 +62,6 @@ for(i in 1:5){
 }
 
 tableOfAdobePutsDifferentK <- cbind(adobe.options.strikes,adobe.options.prices,adobe.options.impVol)
-
 tableOfAdobePutsDifferentK
 
 
@@ -82,7 +79,6 @@ for(i in 1:5){
 }
 
 tableOfAdobePutsDifferentK <- cbind(adobe.options.T_exp,adobe.options.prices,adobe.options.impVol)
-
 tableOfAdobePutsDifferentK
 
 # Comparing Implied Vol of Put Options at Different Maturities
@@ -118,8 +114,6 @@ for(i in 1:5){
   tesco.options.BSprices <- c(tesco.options.BSprices,BSprice)
 }
 
-
-
 tableOftescoCallsDifferentK <- cbind(tesco.options.strikes,tesco.options.prices,tesco.options.impVol,tesco.options.BSprices)
 tableOftescoCallsDifferentK
 
@@ -129,14 +123,16 @@ plot(tesco.options.strikes,tesco.options.impVol, type = 'o',
      ylab = "Implied Volatility",
      sub  ="\nParameters: S=277.5,r=.004452,T_exp=10/252")
 
-# Beautiful Daily Price and Returns Plots for NYT Data
+# NYT Make the pretty graphs
 
 NYT.table  <- read.csv(file.choose()) # OPEN NYT DATA FILE
 NYT.prices <- NYT.table$Close
 plot(ts(NYT.prices),
      main="Daily Prices of NYT",
      xlab="Time (in days)",
+     sub ="t=0 is Mar. 8, 2018",
      ylab="Price of NYT ($)")
+
 
 NYT.returns <- daily_returns(NYT.prices)
 hist(NYT.returns,
@@ -146,8 +142,9 @@ ystd = c(1,1)
 NYT.sigma <- ann_volatility(NYT.prices,numperyear=1)
 plot((NYT.returns),type='l',
      main = "NYT Daily Returns vs Time",
-     xlab = "Time (in days)",
-     ylab = "Daily Returns")
+     xlab = "Time (in days)\n",
+     ylab = "Daily Returns",
+     sub  = expression(paste("red lines at ±",sigma," and ±2",sigma)))
 abline(0,0)
 lines(x=c(-10^6,10^6),y=ystd*NYT.sigma,col = 'red',lty=2)
 lines(x=c(-10^6,10^6),y=ystd*2*NYT.sigma,col = 'red',lty=2)
