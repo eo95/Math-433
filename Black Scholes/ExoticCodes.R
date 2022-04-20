@@ -64,7 +64,7 @@ asianPayoff <- function(P,S_vec, S_Texp, avgAsStrike = T, algebraic = T){
   if(P$put){
     payoffVal = max(0,K-S_Texp)
   } else {
-    payoffVal = max{S_Texp-K,0}
+    payoffVal = max(S_Texp-K,0)
   }
   return(payoffVal)
 }
