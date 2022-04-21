@@ -353,7 +353,6 @@ for (i in 1:23){
   avg <- avg/5
   y_1   <- append(y_1, avg)
 }
-x <- c()
 y_2 <- c()
 for (i in 1:23){
   n <- i
@@ -367,5 +366,5 @@ for (i in 1:23){
   avg <- avg/5
   y_2   <- append(y_2, avg)
 }
-plot(x,y_2, col= "blue", type="l", xlab="Number of Steps", ylab="Time (seconds)")
+plot(x,y_2, col= "blue", type="l", xlab="Number of Steps", ylab="Time (seconds)", main="Time to Compile vs. Number of Steps")
 lines(x,y_1, col="green")
