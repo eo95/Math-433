@@ -64,12 +64,19 @@ generate_ud <- function(choice, h, r, delta, sigma, K, S, n, u, d){
     u   <- exp(K_n+V_n)
     d   <- exp(K_n-V_n)
   } else if(choice==5){
+    
+    
+    ### Removed because we can't use it
+    
     #Equal Probabilities Tree (EQP)
-    a = r*h
-    b = 0.5*sqrt(4*h*sigma^2 - 3*(h*r)^2)
-    u = exp(0.5*a + b)
-    d = exp(b - 1.5*a)
-  } else if(choice==6){
+    #a = r*h
+    #b = 0.5*sqrt(4*h*sigma^2 - 3*(h*r)^2)
+    #u = exp(0.5*a + b)
+    #d = exp(b - 1.5*a)
+  #} else if(choice==6){
+    
+    
+    
     #Trigeorgis Tree (TRG)
     a = sqrt(h*sigma^2 + (h*r)^2)
     u = exp(a)
