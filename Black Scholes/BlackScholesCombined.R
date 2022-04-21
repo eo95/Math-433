@@ -100,6 +100,16 @@ black_scholes_discrete_div <- function(P){
 P <- bs_parameterize(S=41,K=40,sigma=0.3,r=0.08,T_exp=0.25,D_CF=c(3,1/12))
 black_scholes_discrete_div(P)
 
+# McDonald Example 12.4 - Currency
+
+# For currency, the normal black_scholes() function works. with:
+## In Parameters: S_0 = x_0 and delta = r_f (the foreign risk free rate)
+
+P.Call <- list(S=1.25,sigma=.1,K=1.2,r=.01,T_exp=1,delta=0.03,put=F)
+P.Put <-list(S=1.25,sigma=.1,K=1.2,r=.01,T_exp=1,delta=0.03,put=T)
+
+black_scholes(P.Call)
+black_scholes(P.Put)
 
 ###Black Scholes on other options
 #This is in cases where we are using exotic options rather than a put or call
