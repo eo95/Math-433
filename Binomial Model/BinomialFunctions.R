@@ -101,11 +101,11 @@ generate_D_v <- function(vec,n,h,r_v){
     # previous interval number (starting with 0)
     b = ceiling(CFs[i,1]/h) - 1
     # discount value to previous interval
-    r = r_v[b]
+    r = r_v[b+1]
     interest = exp(-r*(a - b*h))
     # update output vector
     end_div = interest*CFs[i,2]
-    output[b+1] = output[b] + end_div
+    output[b+1] = output[b+1] + end_div
   }
   return(output)
 }
