@@ -268,7 +268,7 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,choice=0,u=10^8
   }
   
   # Creates D_v
-  if(D_CF == 'None'){
+  if(!is.numeric(D_CF)){
     D_v <- rep(0,n)
   } else {
     D_v <- generate_D_v(D_CF,n,h,r_v)

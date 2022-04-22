@@ -78,16 +78,16 @@ bs <- black_scholes(P)
 bs <- rep(bs, 400)
 lines(x,bs)
 
-x <- 1:23
+x <- 4:23
 y <- c()
-for (i in 1:23){
-  P <- parameterize(S = 107, T_exp = 0.5, n = i, r = 0.035,K = 100, sigma = 0.12, choice = 2, D_CF = )
+for (i in 4:23){
+  P <- parameterize(S = 107, T_exp = 0.5, n = i, r = 0.035,K = 100, sigma = 0.12, choice = 1, D_CF = c(0.25,10,0.25,10))
   y <- append(y, binomial_pricing(P, call_payoff)[[2]][1])
 }
 plot(x,y,xlab="Steps",ylab="Price (dollars)", main="Binomial Price with Increasing Steps")
-P <- bs_parameterize(S = 107, T_exp = 0.5, r = 0.035, K = 100, sigma = 0.12, delta=0.3, put=F)
-bs <- black_scholes(P)
-bs <- rep(bs, 100)
+P <- bs_parameterize(S = 107, T_exp = 0.5, r = 0.035, K = 100, sigma = 0.12, D_CF = c(0.25,10,0.25,10), put=F)
+bs <- prepaid_black_scholes(P, dividend_F)
+bs <- rep(bs,20)
 lines(x,bs)
 
 # Problem 2
