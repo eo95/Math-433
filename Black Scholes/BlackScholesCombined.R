@@ -71,7 +71,7 @@ prepaid_black_scholes <- function(P, F_S, F_K = K_default, extra_P = "None"){
   S = P$S
   K = P$K
   sigma = P$sigma[1]
-  r = P$r_v[1]
+  r = P$r[1]
   T_exp = P$T_exp
   delta = P$delta[1]
   F0_s = F_S(S,P,extra_P)
