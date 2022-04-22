@@ -70,17 +70,17 @@ bs <- black_scholes(P)
 bs <- rep(bs, 400)
 lines(x,bs)
 
-x <- 4:23
+x <- 4:300
 y <- c()
-for (i in 4:23){
-  P <- parameterize(S = 107, T_exp = 0.5, n = i, r = 0.035,K = 100, sigma = 0.12, choice = 1, D_CF = c(0.25,10,0.25,10), recombine=F)
-  y <- append(y, binomial_pricing(P, call_payoff)[[2]][1])
+for (i in x){
+  P <- parameterize(S=107, T_exp=0.5, n=i, r=0.035,K=100,sigma=0.12,choice=1,D_CF=c(0.25,10,0.5,10))
+  y <-append(y, binomial_pricing(P,call_payoff)[[2]][1])
 }
-plot(x,y,xlab="Steps",ylab="Price (dollars)", main="Binomial Price with Increasing Steps")
-P <- bs_parameterize(S = 107, T_exp = 0.5, r = 0.035, K = 100, sigma = 0.12, D_CF = c(0.25,10,0.25,10), put=F)
-bs <- prepaid_black_scholes(P, dividend_F)
-bs <- rep(bs,20)
-lines(x,bs)
+plot(x,y,xlab="Steps",ylab="Price (dollars)",main = "Binomial Convergence to BS Formula")
+P <- bs_parameterize(S=107,T_exp=0.5,r=0.035,K=100,sigma=0.12,D_CF=c(0.25,10,0.5,10),put=F)
+bs <- black_scholes_div(P)
+lines(c(0,500),c(bs,bs),type='l',col="Blue")
+
 
 # Problem 2
 # (a)
