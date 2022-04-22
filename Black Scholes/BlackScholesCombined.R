@@ -12,7 +12,7 @@ bs_parameterize <- function(S,r,T_exp,K,sigma,delta=0,eur=T,put=F,D_CF=0){
   #   may be given in the form of an integer or a vector
   # choice: desired pricing algorithm, see generate_ud()
   # eur: American or European claim (T -> European, F -> American)
-  # D_CF: vector of cash flows ordered (amount_1,time_1,amount_2,time_2,...)
+  # D_CF: vector of cash flows ordered (time, dividend value, t_2, dv_2, ...)
   if(length(D_CF) == 0){
     D_m <- 0
   } else {
@@ -91,7 +91,7 @@ prepaid_black_scholes <- function(P, F_S, F_K, extra_P){
   }
 }
 
-Dividend_F <- function(P, extra_P){
+Dividend_F <- function(S, P, extra_P){
   
 }
 

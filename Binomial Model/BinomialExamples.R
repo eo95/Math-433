@@ -65,6 +65,31 @@ lines(x,bs)
 plot(x,y_5, col="black")
 lines(x,bs)
 
+# Convergence to BS (our example)
+x <- 11:400
+y <- c()
+for (i in 11:400){
+  P <- parameterize(S = 107, T_exp = 0.5, n = i, r = 0.035,K = 100, sigma = 0.12, choice = 2, delta=0.3, recombine=T)
+  y <- append(y, binomial_pricing(P, call_payoff)[[2]][1])
+}
+plot(x,y,xlab="Steps",ylab="Price (dollars)", main="Binomial Price with Increasing Steps", ylim=c(0.7,1.1))
+P <- bs_parameterize(S = 107, T_exp = 0.5, r = 0.035, K = 100, sigma = 0.12, delta=0.3, put=F)
+bs <- black_scholes(P)
+bs <- rep(bs, 400)
+lines(x,bs)
+
+x <- 1:23
+y <- c()
+for (i in 1:23){
+  P <- parameterize(S = 107, T_exp = 0.5, n = i, r = 0.035,K = 100, sigma = 0.12, choice = 2, D_CF = )
+  y <- append(y, binomial_pricing(P, call_payoff)[[2]][1])
+}
+plot(x,y,xlab="Steps",ylab="Price (dollars)", main="Binomial Price with Increasing Steps")
+P <- bs_parameterize(S = 107, T_exp = 0.5, r = 0.035, K = 100, sigma = 0.12, delta=0.3, put=F)
+bs <- black_scholes(P)
+bs <- rep(bs, 100)
+lines(x,bs)
+
 # Problem 2
 # (a)
 P_CRR.256  <- parameterize(T_exp=1,S=5,K=10,r=0.12,sigma=0.5,choice=2,n=256)

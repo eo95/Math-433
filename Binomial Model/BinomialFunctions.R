@@ -248,13 +248,12 @@ parameterize <- function(S,r,T_exp=0,n=0,h=0,K,sigma=0.1,delta=0,choice=0,u=10^8
   else {h=T_exp/n}
   
   # Handles r_v:
-  if(!is.function(r)){
+  if(recombine){
+    r_v = r
+  }else if (!is.function(r)){
     r_v <- rep(r,n)
   } else {
     r_v <- discretize_r_t(r,n,h)
-  }
-  if(recombine){
-    r_v = r
   }
   
   #vectorize delta
