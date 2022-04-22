@@ -41,6 +41,29 @@ black_scholes <- function(P){
   return(price)
 }
 
+black_scholes_div <- function(P){
+  #Black Scholes with discrete dividends.
+  # P is the parameters of the model
+  S = P$S
+  K = P$K
+  r = P$r[1]
+  sigma = P$sigma[1]
+  T_exp = P$T_exp
+  D_m = P$D_m
+  times = D_m[,1]
+  amts  = D_m[,2]
+  PV_div = amts*exp(-r*times)
+  Sbit   = S - sum(PV_div)
+  Kbit   = K * exp(-r*T_exp)
+  d1 <- (log(Sbit/Kbit) + sigma^2/2*T_exp) / (sigma*sqrt(T_exp))
+  d2 <- d1 - sigma*sqrt(T_exp)
+  if (!P$put){
+    price <- Sbit * pnorm(d1) - Kbit*pnorm(d2)
+  } else {
+    price <- -S*bit * pnorm(-d1) + Kbit*pnorm(-d2)
+  }
+  return(price)
+}
 
 #From book example McDonald 12.1 Table infinity
 #Let S =$41 K=$40, sigma = 0.3, r = 8%, T = 0.25 (3 months), and delta = 0 (no dividend yield)
