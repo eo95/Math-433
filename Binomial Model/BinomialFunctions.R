@@ -179,7 +179,7 @@ solve_binomial_pricing_recombine <- function(S_m,C_m,A_m,B_m,r,h,n,eur,payoff,K,
   colnames(A_m) <- collab
   rownames(B_m) <- rowlab
   colnames(B_m) <- collab
-  return(list(S_m,C_m,A_m,B_m))
+  return(list("S_m" = S_m,"C_m" = C_m,"A_m" = A_m,"B_m" = B_m))
 }
 
 binomial_pricing <- function(P,payoff){
