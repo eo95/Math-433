@@ -67,6 +67,35 @@ black_scholes(P)
 #So we require youre prepaid formula and the extra parameters you will need
 #we need F_S and F_K to be of the form function(S, P, extra_P)
 #where both return the prepaid forward for cash(K) and the asset(S)
+prepaid_black_scholes <- function(P, F_S, F_K, extra_P){
+  S = P$S
+  K = P$K
+  sigma = P$sigma[1]
+  r = P$r_v[1]
+  T_exp = P$T_exp
+  delta = P$delta[1]
+  F0_s = F_S(S,P,extra_P)
+  F0_k = F_K(S,P,extra_P)
+  F0_k = F_K(K,P,extra_P)
+  if (!P$put){
+    d1 <- (log(F0_s/F0_k) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
+    d2 <- d1 - sigma*sqrt(T_exp)
+    price <- F0_s*pnorm(d1) - F0_k*pnorm(d2)
+    return(price)
+  }
+  if (else){
+    d1 <- (log(F0_s/F0_k) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
+    d2 <- d1 - sigma*sqrt(T_exp)
+    price <- -F0_s* pnorm(-d1) + F0_k*pnorm(-d2)
+    return(price)
+  }
+}
+
+Dividend_F <- function(P, extra_P){
+  
+}
+
+
 black_scholes_discrete_div <- function(P){
   S = P$S
   K = P$K
