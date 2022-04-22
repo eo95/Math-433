@@ -76,15 +76,13 @@ prepaid_black_scholes <- function(P, F_S, F_K = K_default, extra_P = "None"){
   delta = P$delta[1]
   F0_s = F_S(S,P,extra_P)
   F0_k = F_K(K,P,extra_P)
+  d1 <- (log(F0_s/F0_k) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
+  d2 <- d1 - sigma*sqrt(T_exp)
   if (!P$put){
-    d1 <- (log(F0_s/F0_k) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
-    d2 <- d1 - sigma*sqrt(T_exp)
     price <- F0_s*pnorm(d1) - F0_k*pnorm(d2)
     return(price)
   }
   else{
-    d1 <- (log(F0_s/F0_k) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
-    d2 <- d1 - sigma*sqrt(T_exp)
     price <- -F0_s* pnorm(-d1) + F0_k*pnorm(-d2)
     return(price)
   }
