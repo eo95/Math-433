@@ -1,0 +1,5 @@
+eurusd.table <- read.csv(file.choose()) # Import the EURUSD DATA FILE
+eurusd.prices <- eurusd.table$Close
+eurusd.sigma <- ann_volatility(eurusd.prices[1:28])
+P.Call <- list(S=1.0929,K=1.0946,r=.0033,sigma=eurusd.sigma,delta=-.00585,T_exp=41/252,put=F)
+asianAveragePriceOptions_bs(P.Call)
