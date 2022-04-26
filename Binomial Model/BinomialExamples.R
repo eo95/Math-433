@@ -197,11 +197,11 @@ payoff <- call_payoff
 S_m <- c(4,0,0,6,2,0,9,3,1)
 S_m <- matrix(S_m,3,3)
 C_m <- matrix(0,P$n+1,P$n+1)
-D_m <- matrix(0,P$n+1,P$n+1)
+A_m <- matrix(0,P$n+1,P$n+1)
 B_m <- matrix(0,P$n+1,P$n+1)
 S_T <- S_m[,P$n+1]
 C_m[,P$n+1] <- payoff(S_T,P$K)
-solution <- solve_binomial_pricing_recombine(S_m,C_m,D_m,B_m,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
+solution <- solve_binomial_pricing_recombine(S_m,C_m,A_m,B_m,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
 
 # Problem 7
 square_payoff   <- function(S,K){
@@ -216,7 +216,7 @@ log_payoff      <- function(S,K){
   return(log(S))
 }
 log_value    <- function(S,u,d,r,n){
-  q <- (exp(r) - d)
+  q <- (exp(r) - d)/(u-d)
   output <- (log(S*(d^n))+n*q*log(u/d))
   output <- output*exp(-r*n)
   return(output)
@@ -246,7 +246,7 @@ for (i in 1:50){
   y_1    <- append(y_1, binomial_pricing(P,square_payoff)[[2]][1])
   y_2    <- append(y_2, square_value(S,u,d,r,n))
 }
-plot(x,y_1)
+plot(x,y_1,xlab="Steps", ylab="Price (dollars)", main="Square Payoff: Price vs Number of Steps")
 lines(x,y_2)
 
 #Square function: r vs price
@@ -262,7 +262,7 @@ for (i in 1:50){
   y_1    <- append(y_1, binomial_pricing(P,square_payoff)[[2]][1])
   y_2    <- append(y_2, square_value(S,u,d,r,n))
 }
-plot(x,y_1)
+plot(x,y_1,xlab="Interest (decimal)", ylab="Price (dollars)", main="Square Payoff: Price vs Interest Rate")
 lines(x,y_2)
 
 #Square function: S vs price
@@ -277,7 +277,7 @@ for (i in 1:50){
   y_1    <- append(y_1, binomial_pricing(P,square_payoff)[[2]][1])
   y_2    <- append(y_2, square_value(S,u,d,r,n))
 }
-plot(x,y_1)
+plot(x,y_1, xlab="Asset Value (dollars)", ylab="Price (dollars)", main="Square Payoff: Price vs Asset Value")
 lines(x,y_2)
 
 
@@ -302,7 +302,7 @@ for (i in 1:50){
   y_1    <- append(y_1, binomial_pricing(P,log_payoff)[[2]][1])
   y_2    <- append(y_2, log_value(S,u,d,r,n))
 }
-plot(x,y_1)
+plot(x,y_1,xlab="Steps", ylab="Price (dollars)", main="Log Payoff: Price vs Number of Steps")
 lines(x,y_2)
 
 #Log function: r vs price
@@ -318,7 +318,7 @@ for (i in 1:50){
   y_1    <- append(y_1, binomial_pricing(P,log_payoff)[[2]][1])
   y_2    <- append(y_2, log_value(S,u,d,r,n))
 }
-plot(x,y_1)
+plot(x,y_1,xlab="Interest (decimal)", ylab="Price (dollars)", main="Log Payoff: Price vs Interest Rate")
 lines(x,y_2)
 
 #Log function: S vs price
@@ -333,7 +333,7 @@ for (i in 1:50){
   y_1    <- append(y_1, binomial_pricing(P,log_payoff)[[2]][1])
   y_2    <- append(y_2, log_value(S,u,d,r,n))
 }
-plot(x,y_1)
+plot(x,y_1, xlab="Asset Value (dollars)", ylab="Price (dollars)", main="Log Payoff: Price vs Asset Value")
 lines(x,y_2)
 
 
