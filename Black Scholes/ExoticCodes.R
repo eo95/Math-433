@@ -5,9 +5,9 @@ barrierPayoff <- function(P,S_vec, lockIn = T, up = T, barrier){
     if(lockIn){
       if (max(S_vec) > barrier){
         if(P$Put){
-          payoffVal <- max{0,K-S_T}
+          payoffVal <- max(0,K-S_T)
         } else {
-          payoffVal <- max{0,S_T-K}
+          payoffVal <- max(0,S_T-K)
         }
       } else {
         payoffVal = 0
@@ -15,9 +15,9 @@ barrierPayoff <- function(P,S_vec, lockIn = T, up = T, barrier){
     } else {
       if (max(S_vec) < barrier){
         if(P$put){
-          payoffVal <- max{0,K-S_T}
+          payoffVal <- max(0,K-S_T)
         } else {
-          payoffVal <- max{0,S_T-K}
+          payoffVal <- max(0,S_T-K)
         }
       } else {
         payoffVal = 0
@@ -27,9 +27,9 @@ barrierPayoff <- function(P,S_vec, lockIn = T, up = T, barrier){
     if(lockIn){
       if (min(S_vec) < barrier){
         if(P$Put){
-          payoffVal <- max{0,K-S_T}
+          payoffVal <- max(0,K-S_T)
         } else {
-          payoffVal <- max{0,S_T-K}
+          payoffVal <- max(0,S_T-K)
         }
       } else {
         payoffVal = 0
@@ -37,9 +37,9 @@ barrierPayoff <- function(P,S_vec, lockIn = T, up = T, barrier){
     } else {
       if (min(S_vec) > barrier){
         if(P$put){
-          payoffVal <- max{0,K-S_T}
+          payoffVal <- max(0,K-S_T)
         } else {
-          payoffVal <- max{0,S_T-K}
+          payoffVal <- max(0,S_T-K)
         }
       } else {
         payoffVal = 0
