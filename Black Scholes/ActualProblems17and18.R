@@ -1,5 +1,12 @@
-BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
-  d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
+
+BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F,D_CF = c(0,0)){
+  D_m <- matrix(D_CF,ncol=2,nrow=length(D_CF)/2,byrow=T)
+  times = D_m[,1]
+  amts  = D_m[,2]
+  PV_div = amts*exp(-r*times)
+  Kbit <- K*exp(-r*T_exp)
+  Sbit <- S*exp(-delta*T_exp) - PV_div
+  d1 <- (log(Sbit/Kbit) + (sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
   d2 <- d1 - sigma*sqrt(T_exp)
   if (!put){
     price <- S * exp(-delta*T_exp) *pnorm(d1) - K*exp(-r*T_exp)*pnorm(d2)
@@ -11,7 +18,7 @@ BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
   }
 }
 
-impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,claimVal,steps = 30){
+impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,D_CF = c(0,0),claimVal,steps = 30){
   # Numerically approximates the implied volatility from the given parameters using a version of the midpoint method
   sigmas <- c(0,1)
   print(sigmas)
@@ -29,6 +36,7 @@ impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,claimVal,steps = 30){
   }
   return(mean(sigmas))
 }
+
 
 # Problem 17 ----
 
