@@ -377,3 +377,14 @@ adobe.P <- parameterize(S=452.13,r=.0033,T_exp=54/252,n=25,K=450,sigma=adobe.sig
 adobe.model <- binomial_pricing(adobe.P,payoff=call_payoff)
 adobe.model[[2]][1]
 
+
+# NYT ----
+
+nyt.OTM.ImpVol <- impliedVolatility(S=46.01,K=47,r=.0021,T_exp=29/252,D_CF = c(22/252,.09),claimVal = mean(c(1.50,2.55)))
+nyt.ITM.ImpVol <- impliedVolatility(S=46.01,K=46,r=.0021,T_exp=29/252,D_CF = c(22/252,.09),claimVal = mean(c(2.55,4.00)))
+
+nyt.sigma = mean(c(nyt.OTM.ImpVol,nyt.ITM.ImpVol))
+
+nyt.P <- parameterize(S=46.01,r=.0021,T_exp=29/252,n=20,K=46,sigma=nyt.sigma,choice=2,D_CF=c(22/252,.09),eur=F,recombine = F)
+nyt.model <- binomial_pricing(nyt.P,payoff=call_payoff)
+nyt.model[[2]][1]
