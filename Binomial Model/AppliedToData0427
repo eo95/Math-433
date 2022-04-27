@@ -385,7 +385,7 @@ nyt.ITM.ImpVol <- impliedVolatility(S=46.01,K=46,r=.0021,T_exp=29/252,D_CF = c(2
 
 nyt.sigma = mean(c(nyt.OTM.ImpVol,nyt.ITM.ImpVol))
 
-nyt.P <- parameterize(S=46.01,r=.0021,T_exp=29/252,n=20,K=46,sigma=nyt.sigma,choice=2,D_CF=c(22/252,.09),eur=F,recombine = F)
+nyt.P <- parameterize(S=46.01,r=.0021,T_exp=29/252,n=25,K=46,sigma=nyt.sigma,choice=2,D_CF=c(22/252,.09),eur=F,recombine = F)
 nyt.model <- binomial_pricing(nyt.P,payoff=call_payoff)
 nyt.model[[2]][1]
 
@@ -396,6 +396,6 @@ novartis.ITM.ImpVol <- impliedVolatility(S=77.64,K=76,r=-.0075,T_exp=53/252,D_CF
 
 novartis.sigma = mean(c(novartis.OTM.ImpVol,novartis.ITM.ImpVol))
 
-novartis.P <- parameterize(S=77.64,r=-.0075,T_exp=53/252,n=20,K=78,sigma=novartis.sigma,choice=2,D_CF=c(4/252,3.1),recombine = F)
+novartis.P <- parameterize(S=77.64,r=-.0075,T_exp=53/252,n=25,K=78,sigma=novartis.sigma,choice=2,D_CF=c(4/252,3.1),recombine = F)
 novartis.model <- binomial_pricing(novartis.P,payoff=call_payoff)
 novartis.model[[2]][1]
