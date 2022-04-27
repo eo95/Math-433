@@ -368,8 +368,8 @@ tesco.model[[2]][1]
 
 # ADOBE ----
 
-adobe.OTM.ImpVol <- impliedVolatility(S=452.13,K=460,r=.0033,T_exp=54/252,claimVal = mean(c(41.55,43.00)))
-adobe.ITM.ImpVol <- impliedVolatility(S=452.13,K=440,r=.0033,T_exp=54/252,claimVal = mean(c(31.35,32.65)))
+adobe.OTM.ImpVol <- impliedVolatility(S=452.13,K=460,r=.0033,T_exp=54/252,claimVal = mean(c(31.35,32.65)))
+adobe.ITM.ImpVol <- impliedVolatility(S=452.13,K=440,r=.0033,T_exp=54/252,claimVal = mean(c(41.55,43.00)))
 
 adobe.sigma = mean(c(adobe.OTM.ImpVol,adobe.ITM.ImpVol))
 
