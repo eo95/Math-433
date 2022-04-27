@@ -18,14 +18,12 @@ BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F,D_CF = c(0,0)){
   }
 }
 
+
 impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,D_CF = c(0,0),claimVal,steps = 30){
   # Numerically approximates the implied volatility from the given parameters using a version of the midpoint method
   sigmas <- c(0,1)
-  print(sigmas)
-  print(mean(sigmas))
   for(i in 1:steps){
     sigma_mid <- mean(sigmas)
-    print(sigma_mid)
     err_mid <- BlackScholes(S,K,sigma_mid,r,T_exp,delta,put)-claimVal
     if(err_mid<0){
       sigmas <- c(sigma_mid,sigmas[2])
