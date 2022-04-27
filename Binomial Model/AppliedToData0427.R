@@ -368,12 +368,34 @@ tesco.model[[2]][1]
 
 # ADOBE ----
 
-adobe.OTM.ImpVol <- impliedVolatility(S=452.13,K=440,r=.0033,T_exp=54/252,claimVal = mean(c(41.55,43.00)))
-adobe.ITM.ImpVol <- impliedVolatility(S=452.13,K=460,r=.0033,T_exp=54/252,claimVal = mean(c(31.35,32.65)))
+adobe.OTM.ImpVol <- impliedVolatility(S=452.13,K=460,r=.0033,T_exp=54/252,claimVal = mean(c(31.35,32.65)))
+adobe.ITM.ImpVol <- impliedVolatility(S=452.13,K=440,r=.0033,T_exp=54/252,claimVal = mean(c(41.55,43.00)))
 
 adobe.sigma = mean(c(adobe.OTM.ImpVol,adobe.ITM.ImpVol))
 
-adobe.P <- parameterize(S=452.13,r=.0033,T_exp=54/252,n=20,K=450,sigma=adobe.sigma,choice=2,eur=F,recombine = F)
+adobe.P <- parameterize(S=452.13,r=.0033,T_exp=54/252,n=25,K=450,sigma=adobe.sigma,choice=2,eur=F,recombine = F)
 adobe.model <- binomial_pricing(adobe.P,payoff=call_payoff)
 adobe.model[[2]][1]
 
+
+# NYT ----
+
+nyt.OTM.ImpVol <- impliedVolatility(S=46.01,K=47,r=.0021,T_exp=29/252,D_CF = c(22/252,.09),claimVal = mean(c(1.50,2.55)))
+nyt.ITM.ImpVol <- impliedVolatility(S=46.01,K=46,r=.0021,T_exp=29/252,D_CF = c(22/252,.09),claimVal = mean(c(2.55,4.00)))
+
+nyt.sigma = mean(c(nyt.OTM.ImpVol,nyt.ITM.ImpVol))
+
+nyt.P <- parameterize(S=46.01,r=.0021,T_exp=29/252,n=20,K=46,sigma=nyt.sigma,choice=2,D_CF=c(22/252,.09),eur=F,recombine = F)
+nyt.model <- binomial_pricing(nyt.P,payoff=call_payoff)
+nyt.model[[2]][1]
+
+# NOVARTIS ----
+
+novartis.OTM.ImpVol <- impliedVolatility(S=77.64,K=80,r=-.0075,T_exp=53/252,D_CF = c(4/252,3.1),claimVal = mean(c(1.28,1.87)))
+novartis.ITM.ImpVol <- impliedVolatility(S=77.64,K=76,r=-.0075,T_exp=53/252,D_CF = c(4/252,3.1),claimVal = mean(c(2.63,3.54)))
+
+novartis.sigma = mean(c(novartis.OTM.ImpVol,novartis.ITM.ImpVol))
+
+novartis.P <- parameterize(S=77.64,r=-.0075,T_exp=53/252,n=20,K=78,sigma=novartis.sigma,choice=2,D_CF=c(4/252,3.1),recombine = F)
+novartis.model <- binomial_pricing(novartis.P,payoff=call_payoff)
+novartis.model[[2]][1]
