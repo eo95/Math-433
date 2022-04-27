@@ -43,7 +43,7 @@ bs  <- rep(2.1334, 64)
     y_2    <- append(y_2, binomial_pricing(C_JR,payoff=call_payoff)[[2]][1])
     C_MCRR <- parameterize(T_exp=0.25,S=60,K=65,r=0.08,sigma=0.3,choice=4,n=k)
     y_3    <- append(y_3, binomial_pricing(C_MCRR,payoff=call_payoff)[[2]][1])
-    C_TRG  <- parameterize(T_exp=0.25,S=60,K=65,r=0.08,sigma=0.3,choice=6,n=k)
+    C_TRG  <- parameterize(T_exp=0.25,S=60,K=65,r=0.08,sigma=0.3,choice=5,n=k)
     y_5    <- append(y_5, binomial_pricing(C_TRG,payoff=call_payoff)[[2]][1])
   }
 plot(x,y_1,xlab="Steps",ylab="Price (dollars)", main="Call Convergence to Black-Scholes over Time")
