@@ -150,3 +150,20 @@ for(i in 1:15){
 }
 table = matrix(prices,3,5,byrow=T)
 table
+
+
+
+# Black Scholes Eqn vs Black Scholes Price Run Sim
+N = 10000
+P.Call <- list(S=277.5,K=280,r=.004452,T_exp=52/252,put=F,sigma=0.24,delta=0)
+payoffs <- c()
+for(i in 1:N){
+  priceRun <- blackscholesPriceRunSim(P.Call,c(0,52/252))
+  S_T <- tail(priceRun,1)
+  K   <- P.Call$K
+  payoff = max(0,S_T-K)
+  payoffs = c(payoffs,payoff)
+}
+price <- exp(-52/252*.004452)*mean(payoffs)
+price
+black_scholes(P.Call)
