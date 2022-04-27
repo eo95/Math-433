@@ -373,7 +373,7 @@ adobe.ITM.ImpVol <- impliedVolatility(S=452.13,K=440,r=.0033,T_exp=54/252,claimV
 
 adobe.sigma = mean(c(adobe.OTM.ImpVol,adobe.ITM.ImpVol))
 
-adobe.P <- parameterize(S=452.13,r=.0033,T_exp=54/252,n=20,K=450,sigma=adobe.sigma,choice=2,eur=F,recombine = F)
+adobe.P <- parameterize(S=452.13,r=.0033,T_exp=54/252,n=25,K=450,sigma=adobe.sigma,choice=2,eur=F,recombine = F)
 adobe.model <- binomial_pricing(adobe.P,payoff=call_payoff)
 adobe.model[[2]][1]
 
