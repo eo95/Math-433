@@ -308,6 +308,7 @@ bs_parameterize <- function(S,r,T_exp,K,sigma,delta=0,eur=T,put=F,D_CF=0){
   # choice: desired pricing algorithm, see generate_ud()
   # eur: American or European claim (T -> European, F -> American)
   # D_CF: vector of cash flows ordered (time, dividend value, t_2, dv_2, ...)
+  ## Note: for currency exchange S = X_0, delta = r_f
   if(length(D_CF) == 0){
     D_m <- 0
   } else {
@@ -318,7 +319,7 @@ bs_parameterize <- function(S,r,T_exp,K,sigma,delta=0,eur=T,put=F,D_CF=0){
 }
 
 black_scholes <- function(P){
-  #Black Scholes with or without dividend yeild
+  ### Black Scholes with or without dividend yeild
   # P is the parameters of the model
   S = P$S
   K = P$K
@@ -336,14 +337,13 @@ black_scholes <- function(P){
   return(price)
 }
 
-
-###Black scholes on other assets
-#For use in cases with differing prepaid forward value like discrete dividends and currencies
-#This requires a lot of case work so we can't work this is with a general P list
-#So we require youre prepaid formula and the extra parameters you will need
-#we need F_S and F_K to be of the form function(S, P, extra_P)
-#where both return the prepaid forward for cash(K) and the asset(S)
 prepaid_black_scholes <- function(P, F_S, F_K = K_default, extra_P = "None"){
+  ###Black scholes on other assets
+  #For use in cases with differing prepaid forward value like discrete dividends and currencies
+  #This requires a lot of case work so we can't work this is with a general P list
+  #So we require youre prepaid formula and the extra parameters you will need
+  #we need F_S and F_K to be of the form function(S, P, extra_P)
+  #where both return the prepaid forward for cash(K) and the asset(S)
   S = P$S
   K = P$K
   sigma = P$sigma[1]
@@ -389,6 +389,8 @@ dividend_F <- function(S, P, extra_P){
 }
 
 BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
+  # Alt. Black Scholes function that does not use the parameter list P
+  # This function is only used in the Implied Volatility function
   d1 <- (log(S/K) + (r - delta + sigma^2/2)*T_exp) / (sigma*sqrt(T_exp))
   d2 <- d1 - sigma*sqrt(T_exp)
   if (!put){
@@ -402,6 +404,7 @@ BlackScholes <- function(S, K, sigma, r, T_exp, delta = 0, put=F){
 }
 
 black_scholes_discrete_div <- function(P){
+  # black_scholes formula for discrete dividends
   S = P$S
   K = P$K
   sigma = P$sigma[1]
@@ -435,7 +438,6 @@ black_scholes_discrete_div <- function(P){
 # Volatility Analysis
 ####                                        ####
 ####                                        ####
-
 
 nonannual_volatility <- function(prices){
   returns_d <- daily_returns(prices)
