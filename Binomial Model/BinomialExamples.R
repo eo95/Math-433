@@ -203,6 +203,20 @@ S_T <- S_m[,P$n+1]
 C_m[,P$n+1] <- payoff(S_T,P$K)
 solution <- solve_binomial_pricing_recombine(S_m,C_m,A_m,B_m,P$r_v,P$h,P$n,P$eur,payoff=payoff,P$K,P$delta,P$D_v)
 
+    # Standard Hedge: 
+    # Pu = Pd but Pu != P so this is not self financing
+
+Pu = solution[[2]][4] - solution[[3]][1]*solution[[1]][4]
+Pd = solution[[2]][5] - solution[[3]][1]*solution[[1]][5]
+P  = solution[[2]][1] - solution[[3]][1]*solution[[1]][1]
+
+    # Hedge with cash:
+    # Pu = Pd = P = 0
+
+Pu = solution[[2]][4] - solution[[3]][1]*solution[[1]][4] - solution[[4]][1]*exp(1/3)
+Pd = solution[[2]][5] - solution[[3]][1]*solution[[1]][5] - solution[[4]][1]*exp(1/3)
+P  = solution[[2]][1] - solution[[3]][1]*solution[[1]][1] - solution[[4]][1]
+
 # Problem 7
 square_payoff   <- function(S,K){
   return(S^2)

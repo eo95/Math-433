@@ -35,6 +35,10 @@ impliedVolatility <- function(S,K,r,T_exp,delta=0,put=F,D_CF = c(0,0),claimVal,s
   return(mean(sigmas))
 }
 
+# Slide Show Graph
+
+
+
 
 # Problem 17 ----
 
